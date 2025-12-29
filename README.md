@@ -56,3 +56,8 @@ To ensure cross-platform compatibility:
 ### 7. Memory Management (No Dynamic Allocation)
 - To ensure stability on embedded systems (STM32/ESP32), avoid using dynamic memory allocation (`new`, `malloc`, `std::vector`, `std::string`) inside the models.
 - Use fixed-size arrays and primitive types.
+
+### 8. Language Policy
+- **Code & Commits**: English.
+- **Documentation**: English (Japanese translation allowed).
+- **Internal Comments**: English preferred, but Japanese is allowed for complex logic explanations.
