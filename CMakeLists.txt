@@ -61,7 +61,7 @@ if(BUILD_FOR_ROS2)
     ament_package()
     
 else()
-    message(STATUS "Building for Generic C++ / STM32")
+    message(STATUS "Building for Generic C++")
 
     add_library(${PROJECT_NAME} STATIC
         ${SOURCES}
