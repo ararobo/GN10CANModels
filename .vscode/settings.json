@@ -2,5 +2,11 @@
     "C_Cpp.clang_format_path": "${workspaceFolder}/.clang-format",
     "C_Cpp.default.cppStandard": "c++14",
     "editor.formatOnSave": true,
-    "editor.formatOnPaste": false
+    "editor.formatOnPaste": false,
+    "github.copilot.enable": {
+        "*": false,
+        "plaintext": false,
+        "markdown": false,
+        "scminput": false
+    }
 }
