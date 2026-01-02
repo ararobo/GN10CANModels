@@ -21,7 +21,7 @@ IncludeBlocks: Regroup
 
 IndentCaseLabels: true
 
-AccessModifierOffset: -2
+AccessModifierOffset: -3
 
 BinPackArguments: false
 BinPackParameters: false
