@@ -31,14 +31,20 @@ enum class MsgTypeMotorDriver : uint8_t {
 };
 
 enum class MsgTypeServoDriver : uint8_t {
-    Init     = 0,
-    Target   = 1,
-    Freqency = 2,
+    Init      = 0,
+    Target    = 1,
+    Frequency = 2,
 };
 
 enum class MsgTypeSolenoidDriver : uint8_t {
     Init   = 0,
     Target = 1,
+};
+
+enum class MsgTypeCommunicationModule : uint8_t {
+    Init           = 0,
+    Heartbeat      = 1,
+    ControllerData = 2,
 };
 
 enum class MsgTypeSensorHub : uint8_t {
