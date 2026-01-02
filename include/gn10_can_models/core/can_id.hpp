@@ -4,7 +4,7 @@
 #include <type_traits>
 
 namespace gn10_can {
-namespace config {
+namespace id {
 
 static constexpr uint8_t BIT_WIDTH_DEV_TYPE = 3;
 static constexpr uint8_t BIT_WIDTH_DEV_ID   = 4;
@@ -57,5 +57,5 @@ enum class MsgTypeLED : uint8_t {
     Init = 0,
 };
 
-}  // namespace config
+}  // namespace id
 }  // namespace gn10_can
