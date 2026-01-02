@@ -28,6 +28,7 @@ enum class MsgTypeMotorDriver : uint8_t {
     Target      = 1,
     LimitSwitch = 2,
     Gain        = 3,
+    Feedback    = 4,
 };
 
 enum class MsgTypeServoDriver : uint8_t {
