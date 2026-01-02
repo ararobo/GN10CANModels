@@ -2,6 +2,7 @@
 
 #include <algorithm>
 #include <array>
+#include <cstddef>
 #include <cstdint>
 #include <vector>
 
@@ -14,7 +15,7 @@ namespace gn10_can {
  *
  */
 struct CANFrame {
-    static constexpr uint8_t MAX_DLC = 8;
+    static constexpr std::size_t MAX_DLC = 8;
 
     uint32_t id = 0;                      // CAN ID
     std::array<uint8_t, MAX_DLC> data{};  // Data payload
@@ -39,7 +40,7 @@ struct CANFrame {
     }
 
     void set_data(const std::vector<uint8_t>& payload) {
-        size_t size = std::min(payload.size(), static_cast<size_t>(MAX_DLC));
+        std::size_t size = std::min(payload.size(), MAX_DLC);
         std::copy(payload.begin(), payload.begin() + size, data.begin());
         if (size < MAX_DLC) {
             std::fill(data.begin() + size, data.end(), 0);
@@ -48,21 +49,22 @@ struct CANFrame {
         this->dlc = static_cast<uint8_t>(size);
     }
 
-    bool operator==(const CANFrame& other) const {
+    bool operator==(const CANFrame& other) const noexcept {
         if (id != other.id || dlc != other.dlc || is_extended != other.is_extended ||
             is_rtr != other.is_rtr || is_error != other.is_error) {
             return false;
         }
 
-        size_t loop_limit = (dlc > MAX_DLC) ? MAX_DLC : dlc;
+        std::size_t loop_limit =
+            (static_cast<std::size_t>(dlc) > MAX_DLC) ? MAX_DLC : static_cast<std::size_t>(dlc);
 
-        for (size_t i = 0; i < loop_limit; i++) {
+        for (std::size_t i = 0; i < loop_limit; ++i) {
             if (data[i] != other.data[i]) return false;
         }
         return true;
     }
 
-    bool operator!=(const CANFrame& other) const { return !(*this == other); }
+    bool operator!=(const CANFrame& other) const noexcept { return !(*this == other); }
 };
 
 }  // namespace gn10_can
