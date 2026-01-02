@@ -1,7 +1,5 @@
 #pragma once
 
-#include <string>
-
 #include "gn10_can/core/can_frame.hpp"
 
 namespace gn10_can {

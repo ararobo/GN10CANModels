@@ -4,7 +4,6 @@
 #include <array>
 #include <cstddef>
 #include <cstdint>
-#include <vector>
 
 #include "gn10_can/core/can_id.hpp"
 
@@ -32,16 +31,27 @@ struct CANFrame {
     static CANFrame make(id::DeviceType type,
                          uint8_t dev_id,
                          CmdEnum cmd,
-                         const std::vector<uint8_t>& payload = {}) {
+                         const uint8_t* payload = nullptr,
+                         std::size_t length     = 0) {
         CANFrame frame;
         frame.id = id::pack(type, dev_id, cmd);
-        frame.set_data(payload);
+        frame.set_data(payload, length);
         return frame;
     }
 
-    void set_data(const std::vector<uint8_t>& payload) {
-        std::size_t size = std::min(payload.size(), MAX_DLC);
-        std::copy(payload.begin(), payload.begin() + size, data.begin());
+    template <typename CmdEnum>
+    static CANFrame make(id::DeviceType type,
+                         uint8_t dev_id,
+                         CmdEnum cmd,
+                         std::initializer_list<uint8_t> payload) {
+        return make(type, dev_id, cmd, payload.begin(), payload.size());
+    }
+
+    void set_data(const uint8_t* payload, std::size_t length) {
+        std::size_t size = std::min(length, MAX_DLC);
+        if (payload != nullptr && size > 0) {
+            std::copy(payload, payload + size, data.begin());
+        }
         if (size < MAX_DLC) {
             std::fill(data.begin() + size, data.end(), 0);
         }
