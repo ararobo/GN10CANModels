@@ -17,7 +17,7 @@ This library is designed to work across multiple platforms:
 
 ```bash
 mkdir build && cd build
-cmake ..
+cmake -DBUILD_FOR_ROS2=OFF -DBUILD_TESTS=ON .. # -DCMAKE_BUILD_TYPE=Release
 cmake --build .
 ctest  # Run tests
 ```
@@ -33,7 +33,7 @@ colcon test-result --all
 ## Usage
 
 ### 1. Implement Driver Interface
-You need to implement `gn10_can::drivers::DriverInterface` for your specific hardware (e.g., ESP32 TWAI, SocketCAN, etc.).
+You need to implement `gn10_can::drivers::DriverInterface` for your specific hardware (e.g., STM32, ESP32 , SocketCAN, etc.).
 
 ```cpp
 #include "gn10_can/drivers/driver_interface.hpp"
