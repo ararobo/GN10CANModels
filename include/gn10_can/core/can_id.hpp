@@ -31,6 +31,7 @@ enum class MsgTypeMotorDriver : uint8_t {
     Target   = 1,
     Gain     = 3,
     Feedback = 4,
+    Status   = 5,
 };
 
 enum class MsgTypeServoDriver : uint8_t {
