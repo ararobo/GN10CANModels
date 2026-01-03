@@ -40,7 +40,7 @@ jobs:
       working-directory: ${{github.workspace}}/build
       run: ctest -C Release --output-on-failure
 
-ros2_test:
+  ros2_test:
     name: ROS 2 Humble Test
     runs-on: ubuntu-22.04
     timeout-minutes: 5
@@ -62,14 +62,18 @@ ros2_test:
       - name: Build and Test
         shell: bash
         run: |
+          # 環境読み込み
+          source /opt/ros/humble/setup.bash
+          
+          # ccache と git をインストール
+          apt-get update && apt-get install -y git ccache
+          
           # ccacheのセットアップ
           export CCACHE_DIR=${{ github.workspace }}/.ccache
           export PATH="/usr/lib/ccache:$PATH"
           mkdir -p $CCACHE_DIR
           
-          # 環境読み込み & 依存関係インストール
-          source /opt/ros/humble/setup.bash
-          sudo apt-get update
+          # 依存関係の解決
           rosdep update
           rosdep install --from-paths . --ignore-src -y
           
