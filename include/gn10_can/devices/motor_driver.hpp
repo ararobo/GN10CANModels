@@ -9,6 +9,10 @@ class MotorDriver : public CANDevice {
   public:
     MotorDriver(CANManager& manager, uint8_t dev_id);
 
+    void send_init();
+
+    void send_target(float target);
+
   private:
 };
 }  // namespace devices
