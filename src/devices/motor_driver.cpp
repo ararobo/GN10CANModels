@@ -13,9 +13,17 @@ void MotorDriver::send_init(const MotorConfig& config) {
 }
 
 void MotorDriver::send_target(float target) {
-    std::array<uint8_t, 4> raw_data{};
-    converter::pack(raw_data, 0, target);
-    send(id::MsgTypeMotorDriver::Target, raw_data);
+    std::array<uint8_t, 4> payload{};
+    converter::pack(payload, 0, target);
+    send(id::MsgTypeMotorDriver::Target, payload);
 }
+
+void MotorDriver::send_gain(devices::GainType type, float value) {
+    std::array<uint8_t, 5> payload{};
+    payload[0] = static_cast<uint8_t>(type);
+    converter::pack(payload, 1, value);
+    send(id::MsgTypeMotorDriver::Gain, payload);
+}
+
 }  // namespace devices
 }  // namespace gn10_can

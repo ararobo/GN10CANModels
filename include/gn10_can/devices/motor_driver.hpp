@@ -14,6 +14,8 @@ class MotorDriver : public CANDevice {
 
     void send_target(float target);
 
+    void send_gain(devices::GainType type, float value);
+
   private:
 };
 }  // namespace devices

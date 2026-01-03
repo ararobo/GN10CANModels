@@ -18,6 +18,13 @@ enum class EncoderType : uint8_t {
     IncrementalTotal = 3,
 };
 
+enum class GainType : uint8_t {
+    Kp = 0x00,
+    Ki = 0x01,
+    Kd = 0x02,
+    Ff = 0x03,
+};
+
 class MotorConfig {
   public:
     MotorConfig() {}
