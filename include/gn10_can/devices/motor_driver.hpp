@@ -20,7 +20,18 @@ class MotorDriver : public CANDevice {
 
     void send_status(float load_current, int8_t temperature);
 
+    void on_receive(const CANFrame& frame) override;
+
+    float get_feedback_value() const;
+    uint8_t get_limit_switch_state() const;
+    float get_load_current() const;
+    int8_t get_temperature() const;
+
   private:
+    float feedback_val_{0.0f};
+    uint8_t limit_sw_state_{0};
+    float load_current_{0.0f};
+    int8_t temperature_{0};
 };
 }  // namespace devices
 }  // namespace gn10_can

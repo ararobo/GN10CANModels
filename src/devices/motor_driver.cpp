@@ -39,5 +39,37 @@ void MotorDriver::send_status(float load_current, int8_t temperature) {
     send(id::MsgTypeMotorDriver::Status, payload);
 }
 
+void MotorDriver::on_receive(const CANFrame& frame) {
+    auto id_fields = id::unpack(frame.id);
+
+    if (id_fields.type != device_type_ || id_fields.dev_id != device_id_) {
+        return;
+    }
+
+    if (id_fields.is_command(id::MsgTypeMotorDriver::Feedback)) {
+        converter::unpack(frame.data.data(), frame.dlc, 0, feedback_val_);
+        converter::unpack(frame.data.data(), frame.dlc, 4, limit_sw_state_);
+    } else if (id_fields.is_command(id::MsgTypeMotorDriver::Status)) {
+        converter::unpack(frame.data.data(), frame.dlc, 0, load_current_);
+        converter::unpack(frame.data.data(), frame.dlc, 4, temperature_);
+    }
+}
+
+float MotorDriver::get_feedback_value() const {
+    return feedback_val_;
+}
+
+uint8_t MotorDriver::get_limit_switch_state() const {
+    return limit_sw_state_;
+}
+
+float MotorDriver::get_load_current() const {
+    return load_current_;
+}
+
+int8_t MotorDriver::get_temperature() const {
+    return temperature_;
+}
+
 }  // namespace devices
 }  // namespace gn10_can
