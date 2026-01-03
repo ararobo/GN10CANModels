@@ -10,7 +10,7 @@ namespace gn10_can {
 namespace converter {
 
 template <typename T>
-bool write(uint8_t* buffer, size_t buffer_len, uint8_t start_byte, T value) {
+bool pack(uint8_t* buffer, size_t buffer_len, uint8_t start_byte, T value) {
     static_assert(std::is_trivially_copyable<T>::value, "Type must be POD");
 
     if (start_byte + sizeof(T) > buffer_len) {
@@ -21,7 +21,7 @@ bool write(uint8_t* buffer, size_t buffer_len, uint8_t start_byte, T value) {
 }
 
 template <typename T>
-bool read(const uint8_t* buffer, size_t buffer_len, uint8_t start_byte, T& out_value) {
+bool unpack(const uint8_t* buffer, size_t buffer_len, uint8_t start_byte, T& out_value) {
     static_assert(std::is_trivially_copyable<T>::value, "Type must be POD");
 
     if (start_byte + sizeof(T) > buffer_len) {
@@ -32,8 +32,8 @@ bool read(const uint8_t* buffer, size_t buffer_len, uint8_t start_byte, T& out_v
 }
 
 template <typename T, size_t N>
-bool write(std::array<uint8_t, N>& buffer, uint8_t start_byte, T value) {
-    return write(buffer.data(), N, start_byte, value);
+bool pack(std::array<uint8_t, N>& buffer, uint8_t start_byte, T value) {
+    return pack(buffer.data(), N, start_byte, value);
 }
 
 }  // namespace converter

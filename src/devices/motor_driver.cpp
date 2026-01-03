@@ -14,7 +14,7 @@ void MotorDriver::send_init(const MotorConfig& config) {
 
 void MotorDriver::send_target(float target) {
     std::array<uint8_t, 4> raw_data{};
-    converter::write(raw_data, 0, target);
+    converter::pack(raw_data, 0, target);
     send(id::MsgTypeMotorDriver::Target, raw_data);
 }
 }  // namespace devices
