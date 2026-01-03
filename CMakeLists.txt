@@ -58,7 +58,7 @@ if(BUILD_FOR_ROS2)
         find_package(ament_lint_auto REQUIRED)
         ament_lint_auto_find_test_dependencies()
         
-        # Add GTest integration here if needed later
+        add_subdirectory(tests)
     endif()
 
     ament_package()
@@ -78,5 +78,10 @@ else()
     # Basic installation support for generic CMake users
     install(TARGETS ${PROJECT_NAME} DESTINATION lib)
     install(DIRECTORY include/ DESTINATION include)
+
+    option(BUILD_TESTS "Build tests" ON)
+    if(BUILD_TESTS)
+        add_subdirectory(tests)
+    endif()
 
 endif()
