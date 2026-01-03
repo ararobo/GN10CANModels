@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.22)
 project(gn10_can)
 
 # Default to C++14 (C++17 is also fine, but 14 is safer for older embedded compilers)

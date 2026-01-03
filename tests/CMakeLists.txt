@@ -1,4 +1,4 @@
-cmake_minimum_required(VERSION 3.8)
+cmake_minimum_required(VERSION 3.22)
 
 if(BUILD_FOR_ROS2)
   if(BUILD_TESTING)

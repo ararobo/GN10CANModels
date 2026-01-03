@@ -79,4 +79,4 @@ jobs:
           
           # ビルド & テスト
           colcon build --packages-select gn10_can --cmake-args -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
-          colcon test --packages-select gn10_can --output-on-failure
+          colcon test --packages-select gn10_can --ctest-args --output-on-failure
