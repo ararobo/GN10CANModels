@@ -11,15 +11,88 @@ This library is designed to work across multiple platforms:
 - **STM32** - Makefile/CubeIDE
 - **ROS 2** - CMake/Linux
 
+## Build & Test
+
+### Generic C++ (CMake)
+
+```bash
+mkdir build && cd build
+cmake ..
+cmake --build .
+ctest  # Run tests
+```
+
+### ROS 2 (Colcon)
+
+```bash
+colcon build --packages-select gn10_can
+colcon test --packages-select gn10_can
+colcon test-result --all
+```
+
+## Usage
+
+### 1. Implement Driver Interface
+You need to implement `gn10_can::drivers::DriverInterface` for your specific hardware (e.g., ESP32 TWAI, SocketCAN, etc.).
+
+```cpp
+#include "gn10_can/drivers/driver_interface.hpp"
+
+class MyCANDriver : public gn10_can::drivers::DriverInterface {
+public:
+    bool send(const gn10_can::CANFrame& frame) override {
+        // Implement hardware send
+        return true;
+    }
+    bool receive(gn10_can::CANFrame& out_frame) override {
+        // Implement hardware receive
+        return true;
+    }
+};
+```
+
+### 2. Setup Manager and Devices
+
+```cpp
+#include "gn10_can/core/can_manager.hpp"
+#include "gn10_can/devices/motor_driver.hpp"
+
+// ... inside your main loop or setup ...
+
+MyCANDriver driver;
+gn10_can::CANManager manager(driver);
+
+// Create a motor driver instance with ID 1
+gn10_can::devices::MotorDriver motor(manager, 1);
+manager.register_device(&motor);
+
+// Send commands
+motor.send_target(100.0f); // Set target velocity/position
+
+// Main loop
+while (true) {
+    manager.update(); // Process incoming messages
+    // ...
+}
+```
+
 ## Project Structure
 ```text
 gn10-can/
-├── include/gn10_can/ # Header files (API definitions)
-├── src/                     # Implementation files
-├── tests/                   # Unit tests (GTest)
-├── uml/                     # UML diagrams
-└── CMakeLists.txt           # Build configuration
+├── include/gn10_can/
+│   ├── core/        # Core logic (Manager, Device base, Frame)
+│   ├── devices/     # Device implementations (MotorDriver, etc.)
+│   ├── drivers/     # Hardware interfaces
+│   └── utils/       # Utilities (Converter, etc.)
+├── src/             # Implementation files
+├── tests/           # Unit tests (GTest)
+├── uml/             # UML diagrams
+└── CMakeLists.txt   # Build configuration
 ```
+
+## Class Diagram
+
+![Class Diagram](uml/class_diagram.png)
 
 ## Development Rules
 
@@ -41,9 +114,9 @@ To ensure cross-platform compatibility:
 - Only standard C++ headers are allowed: `<cstdint>`, `<cstring>`, `<cmath>`, `<algorithm>`, etc.
 
 ### 4. Hardware Abstraction
-- This library provides **data packing (serialize) / unpacking (deserialize) functions only**.
-- CAN transmission/reception functions (drivers) are **NOT** included in this library.
-- Actual CAN bus interaction must be implemented in the platform-specific application layer.
+- This library provides **data packing (serialize) / unpacking (deserialize) functions** and a **Driver Interface**.
+- Actual CAN bus interaction must be implemented by inheriting from `gn10_can::drivers::DriverInterface`.
+- This allows the library to be platform-agnostic (running on ESP32, Linux/SocketCAN, STM32, etc.).
 
 ### 5. Data Representation (Endianness)
 - Unless otherwise specified in a specific model, multi-byte data is packed in **Little-Endian (Intel format)** by default.

@@ -1,68 +1,104 @@
 @startuml class_diagram
 
-' --- データ構造 ---
-struct CanFrame {
-    + id : uint32
-    + data : uint8[8]
-    + len : uint8
-}
+namespace gn10_can {
 
-' --- ハードウェア抽象化 ---
-' 物理的なCANバスへのアクセスを提供するインターフェース
-interface ICanTransceiver {
-    + {abstract} send(frame: CanFrame) : bool
-    + {abstract} receive(out_frame: CanFrame) : bool
-}
+    namespace core {
+        struct CANFrame {
+            + id : uint32_t
+            + data : std::array<uint8_t, 8>
+            + dlc : uint8_t
+            + is_extended : bool
+            + is_rtr : bool
+            + is_error : bool
+            + {static} make(...) : CANFrame
+            + set_data(payload: uint8_t*, length: size_t)
+        }
 
-' --- バス管理 (Dispatcher) ---
-' 1つのTransceiverを共有し、受信したメッセージを適切なデバイスに振り分ける
-class CanManager {
-    - transceiver : ICanTransceiver
-    - devices : List<CanDevice>
-    + register_device(device: CanDevice)
-    + update() ' 定期的に呼び出す。受信処理と振り分けを行う
-    + send_frame(frame: CanFrame)
-}
+        class CANManager {
+            - driver_ : drivers.DriverInterface&
+            - devices_ : std::array<CANDevice*, 16>
+            - device_count_ : size_t
+            + CANManager(driver: drivers.DriverInterface&)
+            + register_device(device: CANDevice*) : bool
+            + update()
+            + send_frame(frame: CANFrame) : bool
+        }
 
-' --- デバイス抽象基底クラス ---
-' 全てのCANデバイスの共通機能を定義
-abstract class CanDevice {
-    # manager : CanManager
-    # rx_id : uint32 ' 受信ID
-    # tx_id : uint32 ' 送信ID
+        abstract class CANDevice {
+            # manager_ : CANManager&
+            # device_type_ : id.DeviceType
+            # device_id_ : uint8_t
+            + CANDevice(manager: CANManager&, type: id.DeviceType, id: uint8_t)
+            + {abstract} on_receive(frame: CANFrame)
+            + update()
+            + get_device_type() : id.DeviceType
+            + get_device_id() : uint8_t
+            # send(command: CmdEnum, ...) : bool
+        }
+    }
+
+    namespace drivers {
+        interface DriverInterface {
+            + {abstract} send(frame: core.CANFrame) : bool
+            + {abstract} receive(out_frame: core.CANFrame) : bool
+        }
+    }
+
+    namespace devices {
+        class MotorDriver {
+            - feedback_val_ : float
+            - limit_sw_state_ : uint8_t
+            - load_current_ : float
+            - temperature_ : int8_t
+            + MotorDriver(manager: core.CANManager&, dev_id: uint8_t)
+            + send_init(config: MotorConfig)
+            + send_target(target: float)
+            + send_gain(type: GainType, value: float)
+            + send_feedback(...)
+            + send_status(...)
+            + on_receive(frame: core.CANFrame)
+        }
+
+        class MotorConfig {
+            + set_max_duty_ratio(ratio: float)
+            + set_accel_ratio(ratio: float)
+            + set_forward_limit_switch(...)
+            + set_reverse_limit_switch(...)
+            + set_telemetry_cycle(ms: uint8_t)
+            + set_encoder_type(type: EncoderType)
+            + to_bytes() : std::array<uint8_t, 8>
+            + {static} from_bytes(...) : MotorConfig
+        }
+        
+        enum EncoderType {
+            None
+            IncrementalSpeed
+            Absolute
+            IncrementalTotal
+        }
+
+        enum GainType {
+            Kp
+            Ki
+            Kd
+            Ff
+        }
+    }
     
-    + CanDevice(manager: CanManager, rx_id: uint32, tx_id: uint32)
-    + {abstract} on_receive(frame: CanFrame) ' 受信時のコールバック
-    # send(data: uint8[], len: uint8)
+    namespace utils {
+        class can_converter << (U, #FF7700) Utility >> {
+            + {static} pack(...) : bool
+            + {static} unpack(...) : bool
+        }
+    }
+
+    core.CANManager o-- drivers.DriverInterface
+    core.CANManager "1" o-- "*" core.CANDevice : manages >
+    core.CANDevice <|-- devices.MotorDriver
+    core.CANDevice ..> core.CANManager : uses >
+    devices.MotorDriver ..> devices.MotorConfig : uses >
+    devices.MotorDriver ..> devices.GainType : uses >
+    devices.MotorConfig ..> devices.EncoderType : uses >
 }
-
-' --- 具体的なデバイス実装 ---
-
-' モータードライバ
-class MotorDriver {
-    - protocol : MdProtocol
-    + set_velocity(v: float)
-    + on_receive(frame: CanFrame)
-}
-
-' サーボドライバ
-class ServoDriver {
-    + set_angle(deg: float)
-    + on_receive(frame: CanFrame)
-}
-
-' --- プロトコルヘルパー (任意) ---
-class MdProtocol {
-    + encode(...)
-    + decode(...)
-}
-
-' --- 関係性 ---
-CanManager o-- ICanTransceiver
-CanManager "1" o-- "*" CanDevice : manages >
-CanDevice <|-- MotorDriver
-CanDevice <|-- ServoDriver
-MotorDriver *-- MdProtocol
-CanDevice ..> CanManager : uses to send >
 
 @enduml
