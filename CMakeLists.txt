@@ -79,7 +79,7 @@ else()
     install(TARGETS ${PROJECT_NAME} DESTINATION lib)
     install(DIRECTORY include/ DESTINATION include)
 
-    option(BUILD_TESTS "Build tests" ON)
+    option(BUILD_TESTS "Build tests" OFF)
     if(BUILD_TESTS)
         add_subdirectory(tests)
     endif()
