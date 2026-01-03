@@ -13,7 +13,7 @@ This library is designed to work across multiple platforms:
 
 ## Project Structure
 ```text
-GN10CANModels/
+gn10-can/
 ├── include/gn10_can/ # Header files (API definitions)
 ├── src/                     # Implementation files
 ├── tests/                   # Unit tests (GTest)
