@@ -1,4 +1,4 @@
-# GN10CANModels
+# GN10 CAN Library
 CAN bus data models, ID definitions, and handling classes.
 
 This repository is started by @aiba-gento for the robotics communication ecosystem.
