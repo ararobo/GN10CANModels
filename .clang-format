@@ -21,7 +21,7 @@ IncludeBlocks: Regroup
 
 IndentCaseLabels: true
 
-AccessModifierOffset: -3
+AccessModifierOffset: -2
 
 # Put binary operators (except assignments) at the start of wrapped lines
 # BreakBeforeBinaryOperators: NonAssignment
