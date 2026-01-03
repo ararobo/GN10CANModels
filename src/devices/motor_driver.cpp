@@ -29,7 +29,7 @@ void MotorDriver::send_feedback(float current_val, uint8_t limit_switch_state) {
     std::array<uint8_t, 5> payload{};
     converter::pack(payload, 0, current_val);
     converter::pack(payload, 4, limit_switch_state);
-    send(id::MsgTypeMotorDriver::Status, payload);
+    send(id::MsgTypeMotorDriver::Feedback, payload);
 }
 
 void MotorDriver::send_status(float load_current, int8_t temperature) {
