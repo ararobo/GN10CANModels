@@ -1,4 +1,4 @@
-name: Build and Test
+name: CI
 
 on:
   push:
@@ -7,21 +7,54 @@ on:
     branches: [ "main", "master" ]
 
 jobs:
-  build:
+  # Job 1: 純粋なC++としてのテスト (ROS 2なし)
+  # マイコン(STM32/ESP32)側のロジックがWindowsやLinuxでビルドできるか確認します
+  standalone_test:
+    name: Standalone C++ Test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
     strategy:
+      fail-fast: false
       matrix:
-        os: [ubuntu-latest, windows-latest]
+        os: [ubuntu-22.04, windows-latest]
 
     steps:
     - uses: actions/checkout@v4
 
+    # ビルドディレクトリの作成とCMake設定
     - name: Configure CMake
       run: cmake -B ${{github.workspace}}/build -DCMAKE_BUILD_TYPE=Release -DBUILD_FOR_ROS2=OFF
 
+    # ビルド実行
     - name: Build
       run: cmake --build ${{github.workspace}}/build --config Release
 
+    # テスト実行 (CTest)
     - name: Test
       working-directory: ${{github.workspace}}/build
       run: ctest -C Release --output-on-failure
+
+  # Job 2: ROS 2 パッケージとしてのテスト
+  # ノードの動作、リンター(uncrustify/copyright)、依存関係をチェックします
+  ros2_test:
+    name: ROS 2 Humble Test
+    runs-on: ubuntu-22.04
+    steps:
+      - uses: actions/checkout@v4
+
+      # ROS 2 環境のセットアップ (公式アクション)
+      - uses: ros-tooling/setup-ros@v0.7
+        with:
+          required-ros-distributions: humble
+
+      # colcon build & test の実行
+      - uses: ros-tooling/action-ros-ci@v0.3
+        with:
+          target-ros2-distro: humble
+          package-name: gn10_can
+          # テスト失敗時にログを出す設定
+          colcon-defaults: |
+            {
+              "test": {
+                "output-on-failure": true
+              }
+            }
