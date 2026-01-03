@@ -10,7 +10,7 @@ namespace gn10_can {
 class CANDevice;
 
 class CANManager {
- public:
+  public:
     static constexpr std::size_t MAX_DEVICES = 16;
 
     explicit CANManager(drivers::DriverInterface& driver);
@@ -21,7 +21,7 @@ class CANManager {
 
     bool send_frame(const CANFrame& frame);
 
- private:
+  private:
     drivers::DriverInterface& driver_;
     std::array<CANDevice*, MAX_DEVICES> devices_{};
     std::size_t device_count_ = 0;

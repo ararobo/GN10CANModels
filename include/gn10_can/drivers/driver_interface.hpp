@@ -6,7 +6,7 @@ namespace gn10_can {
 namespace drivers {
 
 class DriverInterface {
- public:
+  public:
     virtual ~DriverInterface() = default;
 
     virtual bool send(const CANFrame& frame) = 0;

@@ -8,7 +8,7 @@
 namespace gn10_can {
 
 class CANDevice {
- public:
+  public:
     CANDevice(CANManager& manager, id::DeviceType device_type, uint8_t device_id);
     virtual ~CANDevice() = default;
 
@@ -20,7 +20,7 @@ class CANDevice {
 
     uint8_t get_device_id() const { return device_id_; }
 
- protected:
+  protected:
     template <typename CmdEnum>
     bool send(CmdEnum command, const uint8_t* data = nullptr, uint8_t len = 0) {
         auto frame = CANFrame::make(device_type_, device_id_, command, data, len);
