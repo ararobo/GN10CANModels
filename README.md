@@ -62,8 +62,8 @@ public:
 MyCANDriver driver;
 gn10_can::CANManager manager(driver);
 
-// Create a motor driver instance with ID 1
-gn10_can::devices::MotorDriver motor(manager, 1);
+// Create a motor driver instance with ID 0
+gn10_can::devices::MotorDriver motor(manager, 0);
 manager.register_device(&motor);
 
 // Send commands
@@ -71,8 +71,12 @@ motor.send_target(100.0f); // Set target velocity/position
 
 // Main loop
 while (true) {
-    manager.update(); // Process incoming messages
-    // ...
+    // Process incoming messages.
+    // (Note: You can also call manager.update() directly in the CAN receive
+    //  interrupt or in the driver's receive callback function for lower latency.)
+    manager.update();
+
+    // ... your application logic ...
 }
 ```
 
