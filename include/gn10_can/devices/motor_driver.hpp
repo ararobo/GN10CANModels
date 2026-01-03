@@ -16,6 +16,10 @@ class MotorDriver : public CANDevice {
 
     void send_gain(devices::GainType type, float value);
 
+    void send_feedback(float current_val, uint8_t limit_switch_state);
+
+    void send_status(float load_current, int8_t temperature);
+
   private:
 };
 }  // namespace devices
