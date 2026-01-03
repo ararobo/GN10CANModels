@@ -5,8 +5,7 @@ on:
   pull_request:
     branches: [ "main" ]
 
-permissions:
-  contents: read
+permissions: {}
 
 defaults:
   run:
@@ -16,12 +15,13 @@ concurrency:
   group: ${{ github.workflow }}-${{ github.ref }}
   cancel-in-progress: true
 
-timeout-minutes: 5
-
 jobs:
   standalone_test:
     name: Standalone C++ Test (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
+    timeout-minutes: 5
+    permissions:
+      contents: read
     strategy:
       fail-fast: false
       matrix:
@@ -40,23 +40,39 @@ jobs:
       working-directory: ${{github.workspace}}/build
       run: ctest -C Release --output-on-failure
 
-  ros2_test:
+ros2_test:
     name: ROS 2 Humble Test
     runs-on: ubuntu-22.04
+    timeout-minutes: 5
+    permissions:
+      contents: read
+    container:
+      image: ros:humble-ros-base
+
     steps:
       - uses: actions/checkout@v4
 
-      - uses: ros-tooling/setup-ros@v0.7
+      - uses: actions/cache@v4
         with:
-          required-ros-distributions: humble
+          path: ${{ github.workspace }}/.ccache
+          key: ccache-${{ runner.os }}-${{ github.sha }}
+          restore-keys: |
+            ccache-${{ runner.os }}-
 
-      - uses: ros-tooling/action-ros-ci@v0.3
-        with:
-          target-ros2-distro: humble
-          package-name: gn10_can
-          colcon-defaults: |
-            {
-              "test": {
-                "output-on-failure": true
-              }
-            }
+      - name: Build and Test
+        shell: bash
+        run: |
+          # ccacheのセットアップ
+          export CCACHE_DIR=${{ github.workspace }}/.ccache
+          export PATH="/usr/lib/ccache:$PATH"
+          mkdir -p $CCACHE_DIR
+          
+          # 環境読み込み & 依存関係インストール
+          source /opt/ros/humble/setup.bash
+          sudo apt-get update
+          rosdep update
+          rosdep install --from-paths . --ignore-src -y
+          
+          # ビルド & テスト
+          colcon build --packages-select gn10_can --cmake-args -DCMAKE_C_COMPILER_LAUNCHER=ccache -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+          colcon test --packages-select gn10_can --output-on-failure
