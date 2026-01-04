@@ -27,13 +27,15 @@ jobs:
       matrix:
         os: [ubuntu-22.04, windows-latest]
 
-    steps:
+steps:
       - uses: actions/checkout@v4
 
       - name: Setup ccache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
           key: ${{ matrix.os }}-standalone
+          # Windows用にsccacheを有効化
+          variant: ${{ matrix.os == 'windows-latest' && 'sccache' || 'ccache' }}
 
       - name: Configure CMake
         # CMAKE_<LANG>_COMPILER_LAUNCHER で ccache を有効化
