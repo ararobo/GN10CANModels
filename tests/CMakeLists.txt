@@ -9,6 +9,12 @@ if(BUILD_FOR_ROS2)
     
     ament_add_gtest(test_can_converter test_can_converter.cpp)
     target_link_libraries(test_can_converter ${PROJECT_NAME})
+
+    ament_add_gtest(test_can_manager test_can_manager.cpp)
+    target_link_libraries(test_can_manager ${PROJECT_NAME})
+
+    ament_add_gtest(test_motor_driver test_motor_driver.cpp)
+    target_link_libraries(test_motor_driver ${PROJECT_NAME})
   endif()
 else()
   enable_testing()
@@ -28,7 +34,15 @@ else()
   add_executable(test_can_converter test_can_converter.cpp)
   target_link_libraries(test_can_converter gtest_main ${PROJECT_NAME})
 
+  add_executable(test_can_manager test_can_manager.cpp)
+  target_link_libraries(test_can_manager gtest_main ${PROJECT_NAME})
+
+  add_executable(test_motor_driver test_motor_driver.cpp)
+  target_link_libraries(test_motor_driver gtest_main ${PROJECT_NAME})
+
   include(GoogleTest)
   gtest_discover_tests(test_can_frame)
   gtest_discover_tests(test_can_converter)
+  gtest_discover_tests(test_can_manager)
+  gtest_discover_tests(test_motor_driver)
 endif()
