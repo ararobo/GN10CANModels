@@ -14,7 +14,12 @@ elseif(MSVC)
   add_compile_options(/W4)
 endif()
 
-file(GLOB_RECURSE SOURCES "src/*.cpp")
+set(SOURCES
+    src/core/can_device.cpp
+    src/core/can_manager.cpp
+    src/devices/motor_driver.cpp
+    src/devices/motor_driver_types.cpp
+)
 
 find_package(ament_cmake QUIET)
 find_package(ament_cmake_auto QUIET)
@@ -80,7 +85,7 @@ else()
     install(TARGETS ${PROJECT_NAME} DESTINATION lib)
     install(DIRECTORY include/ DESTINATION include)
 
-    option(BUILD_TESTS "Build tests" OFF)
+    option(BUILD_TESTS "Build tests" ON)
     if(BUILD_TESTS)
         add_subdirectory(tests)
     endif()
