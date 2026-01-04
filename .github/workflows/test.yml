@@ -5,9 +5,13 @@ on:
     branches: [ "main" ]
   pull_request:
     branches: [ "main" ]
+  workflow_dispatch:
 
+# 【重要】テスト結果を書き込むための権限設定
 permissions:
   contents: read
+  checks: write       # dorny/test-reporter に必要
+  pull-requests: write # PRコメント投稿に必要
 
 defaults:
   run:
@@ -18,6 +22,9 @@ concurrency:
   cancel-in-progress: true
 
 jobs:
+  # -----------------------------------------------------------
+  # 1. Standalone C++ Test
+  # -----------------------------------------------------------
   standalone_test:
     name: Generic C++ (${{ matrix.os }})
     runs-on: ${{ matrix.os }}
@@ -25,62 +32,82 @@ jobs:
     strategy:
       fail-fast: false
       matrix:
-        os: [ubuntu-22.04, windows-latest]
+        os: [ubuntu-22.04, windows-latest] 
+        # macOSはdornyアクションのパス解釈で工夫が必要な場合があるため一旦除外、または別途対応
 
-steps:
+    steps:
       - uses: actions/checkout@v4
 
       - name: Setup ccache
         uses: hendrikmuhs/ccache-action@v1.2
         with:
           key: ${{ matrix.os }}-standalone
-          # Windows用にsccacheを有効化
           variant: ${{ matrix.os == 'windows-latest' && 'sccache' || 'ccache' }}
 
       - name: Configure CMake
-        # CMAKE_<LANG>_COMPILER_LAUNCHER で ccache を有効化
-        run: >
-          cmake -B build
-          -DCMAKE_BUILD_TYPE=Release
-          -DBUILD_FOR_ROS2=OFF
-          -DBUILD_TESTS=ON
-          -DCMAKE_C_COMPILER_LAUNCHER=ccache
-          -DCMAKE_CXX_COMPILER_LAUNCHER=ccache
+        run: |
+          if [ "$RUNNER_OS" == "Windows" ]; then LAUNCHER="sccache"; else LAUNCHER="ccache"; fi
+          cmake -B build \
+            -DCMAKE_BUILD_TYPE=Release \
+            -DBUILD_FOR_ROS2=OFF \
+            -DBUILD_TESTS=ON \
+            -DCMAKE_C_COMPILER_LAUNCHER=$LAUNCHER \
+            -DCMAKE_CXX_COMPILER_LAUNCHER=$LAUNCHER
 
       - name: Build
         run: cmake --build build --config Release
 
       - name: Test
         working-directory: build
-        run: ctest -C Release --output-on-failure
+        # 【変更点】 --output-junit で結果をXMLに出力
+        run: ctest -C Release --output-on-failure --output-junit test-results.xml
 
+      # 【追加】 テスト結果のレポート
+      - name: Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure() # テストがコケても実行する
+        with:
+          name: Standalone Tests (${{ matrix.os }})
+          path: build/test-results.xml
+          reporter: java-junit
+          fail-on-error: false # 失敗は上のステップで検知済みなのでここではエラーにしない
+
+  # -----------------------------------------------------------
+  # 2. ROS 2 Test
+  # -----------------------------------------------------------
   ros2_test:
     name: ROS 2 Humble
     runs-on: ubuntu-22.04
     timeout-minutes: 15
-    strategy:
-      fail-fast: false
 
     steps:
       - uses: actions/checkout@v4
 
-      # ROS 2 環境のセットアップ
       - uses: ros-tooling/setup-ros@v0.7
         with:
           required-ros-distributions: humble
+          use-ros2-testing: true
 
-      # ビルドとテスト (colcon)
-      # rosdep install, colcon build, test を一括で行う公式推奨アクション
       - uses: ros-tooling/action-ros-ci@v0.3
+        id: action_ros_ci_step
         with:
           package-name: gn10_can
           target-ros2-distro: humble
-          # colcon build --cmake-args ... に渡される引数
           colcon-defaults: |
             {
               "build": {
-                "cmake-args": ["-DBUILD_FOR_ROS2=ON"]
+                "cmake-args": ["-DBUILD_FOR_ROS2=ON", "-Wall", "-Wextra"]
               }
             }
-          # コードカバレッジやリンターもチェック可能（必要に応じてON）
-          import-token: ${{ secrets.GITHUB_TOKEN }}
+
+      # 【追加】 ROS 2 テスト結果のレポート
+      # colcon test はデフォルトで build/**/test_results/**/*.xml に結果を出力します
+      - name: ROS 2 Test Report
+        uses: dorny/test-reporter@v1
+        if: success() || failure()
+        with:
+          name: ROS 2 Tests
+          # colconが生成するXMLのパスを指定
+          path: ros_ws/build/**/test_results/**/*.xml
+          reporter: java-junit
+          fail-on-error: false
