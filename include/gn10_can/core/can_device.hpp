@@ -10,10 +10,13 @@
  */
 #pragma once
 
+#include <array>
 #include <cstdint>
+#include <initializer_list>
 
 #include "gn10_can/core/can_frame.hpp"
 #include "gn10_can/core/can_manager.hpp"
+
 
 namespace gn10_can {
 
