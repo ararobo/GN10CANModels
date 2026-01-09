@@ -50,7 +50,7 @@ class CANDevice {
 
   protected:
     /**
-     * @brief コマンド・データ・データ長からCANパケットを作成しCANManagerを使用して送信
+     * @brief コマンド・データ・データ長からCANフレームを作成しCANManagerを使用して送信
      *
      * @tparam CmdEnum コマンドのEnum Class
      * @param command
@@ -67,7 +67,7 @@ class CANDevice {
     }
 
     /**
-     * @brief コマンド・データ(initializer list)からCANパケットを作成しCANManagerを使用して送信
+     * @brief コマンド・データ(initializer list)からCANフレームを作成しCANManagerを使用して送信
      *
      * @tparam CmdEnum コマンドのEnum Class
      * @param command
@@ -83,7 +83,7 @@ class CANDevice {
     }
 
     /**
-     * @brief コマンド・データ(array)からCANパケットを作成しCANManagerを使用して送信
+     * @brief コマンド・データ(array)からCANフレームを作成しCANManagerを使用して送信
      *
      * @tparam CmdEnum コマンドのEnum Class
      * @tparam N 送信データ長：1~8
