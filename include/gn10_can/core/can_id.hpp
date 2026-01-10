@@ -1,3 +1,13 @@
+/**
+ * @file can_id.hpp
+ * @author Gento Aiba (aiba-gento)
+ * @brief CAN-IDに関する機能を提供するヘッダーファイル
+ * @version 0.1
+ * @date 2026-01-10
+ *
+ * @copyright Copyright (c) 2026 Gento Aiba
+ * SPDX-License-Identifier: GPL-3.0
+ */
 #pragma once
 
 #include <cstdint>
@@ -10,6 +20,10 @@ static constexpr uint8_t BIT_WIDTH_DEV_TYPE = 4;
 static constexpr uint8_t BIT_WIDTH_DEV_ID   = 4;
 static constexpr uint8_t BIT_WIDTH_COMMAND  = 3;
 
+/**
+ * @brief デバイスの種類
+ *
+ */
 enum class DeviceType : uint8_t {
     EmergencyStop       = 0,
     MotorDriver         = 1,
@@ -20,12 +34,20 @@ enum class DeviceType : uint8_t {
     LED                 = 6,
 };
 
+/**
+ * @brief 非常停止スイッチのメッセージ種類（コマンド）
+ *
+ */
 enum class MsgTypeEmergencyStop : uint8_t {
     Init          = 0,
     Status        = 1,
     EmergencyStop = 2,
 };
 
+/**
+ * @brief モータードライバーのメッセージ種類（コマンド）
+ *
+ */
 enum class MsgTypeMotorDriver : uint8_t {
     Init     = 0,
     Target   = 1,
@@ -34,32 +56,56 @@ enum class MsgTypeMotorDriver : uint8_t {
     Status   = 5,
 };
 
+/**
+ * @brief サーボドライバーのメッセージ種類（コマンド）
+ *
+ */
 enum class MsgTypeServoDriver : uint8_t {
     Init      = 0,
     Target    = 1,
     Frequency = 2,
 };
 
+/**
+ * @brief ソレノイドドライバーのメッセージ種類（コマンド）
+ *
+ */
 enum class MsgTypeSolenoidDriver : uint8_t {
     Init   = 0,
     Target = 1,
 };
 
+/**
+ * @brief 通信モジュールのメッセージ種類（コマンド）
+ *
+ */
 enum class MsgTypeCommunicationModule : uint8_t {
     Init           = 0,
     Heartbeat      = 1,
     ControllerData = 2,
 };
 
+/**
+ * @brief センサーハブのメッセージ種類（コマンド）
+ *
+ */
 enum class MsgTypeSensorHub : uint8_t {
     Init = 0,
     ToF  = 1,
 };
 
+/**
+ * @brief LEDのメッセージ種類（コマンド）
+ *
+ */
 enum class MsgTypeLED : uint8_t {
     Init = 0,
 };
 
+/**
+ * @brief CAN-IDから取り出した通信パケットの種類
+ *
+ */
 struct IdFields {
     DeviceType type;
     uint8_t dev_id;
@@ -71,6 +117,15 @@ struct IdFields {
     }
 };
 
+/**
+ * @brief 通信パケットの種類からCAN-IDにまとめる
+ *
+ * @tparam CmdEnum コマンド
+ * @param type デバイスの種類
+ * @param dev_id デバイスのID
+ * @param cmd コマンド
+ * @return uint32_t 生成したCAN-ID
+ */
 template <typename CmdEnum>
 uint32_t pack(DeviceType type, uint8_t dev_id, CmdEnum cmd) {
     static_assert(std::is_enum<CmdEnum>::value, "Command must be an Enum class");
@@ -88,6 +143,12 @@ uint32_t pack(DeviceType type, uint8_t dev_id, CmdEnum cmd) {
     return id;
 }
 
+/**
+ * @brief CAN-IDから通信パケットの種類を取り出す
+ *
+ * @param std_id CAN-ID
+ * @return IdFields 通信パケットの種類が含まれる構造体
+ */
 inline IdFields unpack(uint32_t std_id) {
     IdFields result;
 
