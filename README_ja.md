@@ -16,6 +16,30 @@ CANバスのデータモデル、ID定義、およびハンドリングクラス
 - **STM32** - Makefile/CubeIDE
 - **ROS 2** - CMake/Linux
 
+## 開発環境構築
+
+### 共通
+
+VSCodeに拡張機能：CMake Toolsをインストール
+
+### Ubuntu
+
+下記コマンドをターミナルで実行
+
+```bash
+sudo apt update
+sudo apt install build-essential cmake ninja-build
+```
+
+### Windows(for STM32)
+
+STM32CubeCLTをインストール
+
+### Windows(Generic)
+
+CMake,Ninjaをインストールしてパスを通す
+
+
 ## ビルドとテスト
 
 ### 汎用 C++ (CMake)
