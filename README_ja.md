@@ -20,7 +20,8 @@ CANバスのデータモデル、ID定義、およびハンドリングクラス
 
 ### 共通
 
-VSCodeに拡張機能：CMake Toolsをインストール
+VSCodeに拡張機能：以下をインストール
+- CMake Tools(Microsoft)
 
 ### Ubuntu
 
@@ -37,7 +38,7 @@ STM32CubeCLTをインストール
 
 ### Windows(Generic)
 
-CMake,Ninjaをインストールしてパスを通す
+C++コンパイラ（Visual Studio or MinGW）、CMake、Ninjaをインストールしてパスを通す
 
 
 ## ビルドとテスト
@@ -127,6 +128,14 @@ gn10-can/
 
 ![Class Diagram](uml/class_diagram.png)
 
+## プロジェクトへの取り込み
+`git submodule`でプロジェクトに追加し、CMakeLists.txtに以下を追記してください。
+```cmake
+# 例: libsフォルダ下に配置した場合
+add_subdirectory(libs/gn10-can)
+target_link_libraries(${PROJECT_NAME} PRIVATE gn10_can)
+```
+
 ## 開発ルール
 
 ### 1. 命名規則
@@ -143,23 +152,14 @@ gn10-can/
 
 ### 3. 標準ライブラリのみ使用
 クロスプラットフォームの互換性を確保するため：
-- `include/gn10_can_models/` 以下のファイルは、`<Arduino.h>`、`<rclcpp/rclcpp.h>`、`<hal_driver.h>` などのプラットフォーム固有のヘッダーを含んでは**いけません**。
+- `include/gn10_can/` 以下のファイルは、`<Arduino.h>`、`<rclcpp/rclcpp.h>`、`<hal_driver.h>` などのプラットフォーム固有のヘッダーを含んでは**いけません**。
 - 標準C++ヘッダーのみが許可されます：`<cstdint>`, `<cstring>`, `<cmath>`, `<algorithm>` など。
 
-### 4. ハードウェア抽象化
-- このライブラリは、**データパッキング（シリアライズ）/ アンパッキング（デシリアライズ）関数**と**ドライバーインターフェース**を提供します。
-- 実際のCANバスとのやり取りは、`gn10_can::drivers::DriverInterface` を継承して実装する必要があります。
-- これにより、ライブラリはプラットフォームに依存しない（ESP32、Linux/SocketCAN、STM32などで動作する）ようになります。
-
-### 5. データ表現（エンディアン）
-- 特定のモデルで指定されていない限り、マルチバイトデータはデフォルトで **リトルエンディアン (Intel形式)** でパックされます。
-- **注**: 実装はホストCPUのエンディアン（通常、ARM/x86ではリトルエンディアン）に依存します。
-
-### 6. メモリ管理（動的割り当てなし）
+### 4. メモリ管理（動的割り当てなし）
 - 組み込みシステム（STM32/ESP32）での安定性を確保するため、モデル内での動的メモリ割り当て（`new`, `malloc`, `std::vector`, `std::string`）の使用は避けてください。
 - 固定サイズの配列とプリミティブ型を使用してください。
 
-### 7. 言語ポリシー（要検討）
+### 5. 言語ポリシー（要検討）
 - **コードとコミット**: 英語。
 - **ドキュメント**: 英語（日本語訳は許可）。
 - **内部コメント**: 日本語

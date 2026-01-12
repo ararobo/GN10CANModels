@@ -158,7 +158,7 @@ Variable and function names must be self-explanatory. We follow the **Google C++
 
 ### 3. Standard Library Only
 To ensure cross-platform compatibility:
-- Files under `include/gn10_can_models/` must **NOT** include platform-specific headers such as `<Arduino.h>`, `<rclcpp/rclcpp.h>`, or `<hal_driver.h>`.
+- Files under `include/gn10_can/` must **NOT** include platform-specific headers such as `<Arduino.h>`, `<rclcpp/rclcpp.h>`, or `<hal_driver.h>`.
 - Only standard C++ headers are allowed: `<cstdint>`, `<cstring>`, `<cmath>`, `<algorithm>`, etc.
 
 ### 4. Memory Management (No Dynamic Allocation)
