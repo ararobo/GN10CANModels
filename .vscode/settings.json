@@ -1,5 +1,5 @@
 {
-    "C_Cpp.default.cppStandard": "c++14",
+    "C_Cpp.default.cppStandard": "c++17",
     "editor.formatOnSave": true,
     "editor.formatOnPaste": false,
     "github.copilot.enable": {
@@ -12,4 +12,14 @@
     "plantuml.exportOutDir": "uml/",
     "plantuml.diagramsRoot": "uml/",
     "plantuml.exportSubFolder": false,
+    "[cpp]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools"
+    },
+    "[c]": {
+        "editor.defaultFormatter": "ms-vscode.cpptools"
+    },
+    "C_Cpp.clang_format_style": "file",
+    "C_Cpp.formatting": "clangFormat",
+    "files.trimTrailingWhitespace": true,
+    "files.insertFinalNewline": true
 }
