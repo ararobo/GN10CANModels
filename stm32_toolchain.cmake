@@ -1,13 +1,11 @@
-# システムの種類を「Generic（マイコン/ベアメタル）」にする
-# これを書くことで、Windows用のライブラリ（kernel32など）がリンクされなくなります
 set(CMAKE_SYSTEM_NAME Generic)
 set(CMAKE_SYSTEM_PROCESSOR arm)
 
-# コンパイラの強制指定（STM32CubeCLTのパス）
-# set(CMAKE_C_COMPILER "C:/ST/STM32CubeCLT_1.20.0/GNU-tools-for-STM32/bin/arm-none-eabi-gcc.exe")
-# set(CMAKE_CXX_COMPILER "C:/ST/STM32CubeCLT_1.20.0/GNU-tools-for-STM32/bin/arm-none-eabi-g++.exe")
-# set(CMAKE_ASM_COMPILER "C:/ST/STM32CubeCLT_1.20.0/GNU-tools-for-STM32/bin/arm-none-eabi-gcc.exe")
+find_program(CMAKE_C_COMPILER "arm-none-eabi-gcc")
+find_program(CMAKE_CXX_COMPILER "arm-none-eabi-g++")
+find_program(CMAKE_ASM_COMPILER "arm-none-eabi-gcc")
 
-# マイコンはリンカスクリプトがないとexe化できないため、
-# チェック段階では「ライブラリ作成ができるか」だけを確認させます。
+find_program(CMAKE_OBJCOPY "arm-none-eabi-objcopy")
+find_program(CMAKE_SIZE "arm-none-eabi-size")
+
 set(CMAKE_TRY_COMPILE_TARGET_TYPE STATIC_LIBRARY)

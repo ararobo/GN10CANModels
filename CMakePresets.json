@@ -7,24 +7,51 @@
     },
     "configurePresets": [
         {
-            "name": "Ninja-Host",
-            "displayName": "Ninja Host Build",
-            "description": "Windows/Linuxホスト用ビルド(Ninjaが必要)",
+            "name": "windows-ninja",
+            "displayName": "Windows (Ninja)",
+            "description": "Windows generic build using Ninja",
             "generator": "Ninja",
-            "binaryDir": "${sourceDir}/build",
+            "binaryDir": "${sourceDir}/build/windows_ninja",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
+                "CMAKE_BUILD_TYPE": "Debug",
+                "BUILD_TESTS": "ON"
             }
         },
         {
             "name": "stm32-cross",
             "displayName": "STM32 (Cross Compile)",
-            "description": "STM32CubeCLTを使用してクロスコンパイル",
+            "description": "Cross compile for STM32",
             "generator": "Ninja",
             "binaryDir": "${sourceDir}/build/stm32",
             "toolchainFile": "${sourceDir}/stm32_toolchain.cmake",
             "cacheVariables": {
-                "CMAKE_BUILD_TYPE": "Debug"
+                "CMAKE_BUILD_TYPE": "Debug",
+                "BUILD_TESTS": "OFF",
+                "ENABLE_STM32_DRIVERS": "OFF"
+            }
+        },
+        {
+            "name": "linux-base",
+            "displayName": "Linux (Generic)",
+            "description": "Linux generic build",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/linux",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "Debug",
+                "BUILD_TESTS": "ON",
+                "BUILD_FOR_ROS2": "OFF"
+            }
+        },
+        {
+            "name": "linux-ros2",
+            "displayName": "Linux (ROS 2)",
+            "description": "Build for ROS 2 environment",
+            "generator": "Ninja",
+            "binaryDir": "${sourceDir}/build/ros2",
+            "cacheVariables": {
+                "CMAKE_BUILD_TYPE": "RelWithDebInfo",
+                "BUILD_FOR_ROS2": "ON",
+                "BUILD_TESTING": "ON"
             }
         }
     ]
