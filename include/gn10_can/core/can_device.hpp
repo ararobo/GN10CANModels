@@ -35,7 +35,8 @@ class CANDevice {
      * @param device_id
      * デバイスのID（同じデバイスの種類のデバイスが複数あることを配慮して、0,1,2,..）
      */
-    CANDevice(CANManager& manager, id::DeviceType device_type, uint8_t device_id);
+    CANDevice(CANManager& manager, id::DeviceType device_type, uint8_t device_id)
+        : manager_(manager), device_type_(device_type), device_id_(device_id) {}
     virtual ~CANDevice() = default;
 
     /**
