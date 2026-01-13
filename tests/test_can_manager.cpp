@@ -13,10 +13,7 @@ class MockDevice : public CANDevice {
 
     void on_receive(const CANFrame& frame) override { received_frames.push_back(frame); }
 
-    void update() override { update_called_count++; }
-
     std::vector<CANFrame> received_frames;
-    int update_called_count = 0;
 };
 
 class CANManagerTest : public ::testing::Test {
@@ -53,15 +50,6 @@ TEST_F(CANManagerTest, UpdateReceivesFrames) {
 
     ASSERT_EQ(device.received_frames.size(), 1);
     EXPECT_EQ(device.received_frames[0].id, 0x123);
-}
-
-TEST_F(CANManagerTest, UpdateCallsDeviceUpdate) {
-    MockDevice device(manager, id::DeviceType::MotorDriver, 1);
-    manager.register_device(&device);
-
-    manager.update();
-
-    EXPECT_EQ(device.update_called_count, 1);
 }
 
 TEST_F(CANManagerTest, SendFrame) {
