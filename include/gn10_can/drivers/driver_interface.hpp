@@ -21,6 +21,8 @@ namespace drivers {
  */
 class DriverInterface {
   public:
+    virtual ~DriverInterface() = default;
+    
     /**
      * @brief CANフレーム送信関数
      *

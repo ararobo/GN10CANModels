@@ -37,6 +37,7 @@ class CANDevice {
      */
     CANDevice(CANManager& manager, id::DeviceType device_type, uint8_t device_id)
         : manager_(manager), device_type_(device_type), device_id_(device_id) {}
+    
     virtual ~CANDevice() = default;
 
     /**
