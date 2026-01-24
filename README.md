@@ -15,7 +15,7 @@ Primarily intended for robot contests, this library simplifies firmware developm
 This library is designed to work across multiple platforms:
 
 - **ESP32** - Arduino environment
-- **STM32** - Makefile/CubeIDE
+- **STM32** - CMake
 - **ROS 2** - CMake/Linux
 
 ## Development Environment Setup
