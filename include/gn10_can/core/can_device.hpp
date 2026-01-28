@@ -65,9 +65,9 @@ class CANDevice {
      * @return uint32_t Routing ID (Type + DeviceID)
      */
     uint32_t get_routing_id() const {
-        // can_id.hpp の定数を使用して計算
-        return (static_cast<uint32_t>(device_type_) & 0x0F) << (id::BIT_WIDTH_COMMAND + id::BIT_WIDTH_DEV_ID) | 
-               (static_cast<uint32_t>(device_id_) & 0x0F) << id::BIT_WIDTH_COMMAND;
+        // CANFrame::get_routing_id() と同じ形式 (Type << BIT_WIDTH_DEV_ID) | DeviceID を返す
+        return (static_cast<uint32_t>(device_type_) << id::BIT_WIDTH_DEV_ID) |
+               static_cast<uint32_t>(device_id_);
     }
 
   protected:
