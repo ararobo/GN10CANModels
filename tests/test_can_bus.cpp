@@ -45,15 +45,13 @@ TEST_F(CANBusTest, Routing) {
     EXPECT_EQ(dev2.received_frames[0].id, 0x100);
 }
 
-    ASSERT_EQ(dev2.received_frames.size(), 1);
-    EXPECT_EQ(dev2.received_frames[0].id, 0x200);
-}
-
 TEST_F(CANBusTest, AutoDetach) {
-    CANFrame f1; f1.id = 0x100;
+    // Type2(ServoDriver), ID0 -> 0x100
+    uint32_t target_id = 0x100;
+    CANFrame f1; f1.id = target_id;
     
     {
-        MockDevice dev1(bus, 0x100);
+        MockDevice dev1(bus, id::DeviceType::ServoDriver, 0);
         driver.push_receive_frame(f1);
         bus.update();
         EXPECT_EQ(dev1.received_frames.size(), 1);
