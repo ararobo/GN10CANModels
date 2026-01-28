@@ -15,7 +15,8 @@
 #include <initializer_list>
 
 #include "gn10_can/core/can_frame.hpp"
-#include "gn10_can/core/can_manager.hpp"
+#include "gn10_can/core/can_bus.hpp"
+#include "gn10_can/core/can_id.hpp"
 
 namespace gn10_can {
 
@@ -29,16 +30,20 @@ class CANDevice {
     /**
      * @brief デバイス抽象化クラスのコンストラクタ
      *
-     * @param manager
-     * CANパケットを送信する為にCANManagerクラスのインスタンスポインタを渡す
+     * @param bus
+     * CANパケットを送信する為にCANBusクラスのインスタンスポインタを渡す
      * @param device_type デバイスの種類
      * @param device_id
      * デバイスのID（同じデバイスの種類のデバイスが複数あることを配慮して、0,1,2,..）
      */
-    CANDevice(CANManager& manager, id::DeviceType device_type, uint8_t device_id)
-        : manager_(manager), device_type_(device_type), device_id_(device_id) {}
+    CANDevice(CANBus& bus, id::DeviceType device_type, uint8_t device_id)
+        : bus_(bus), device_type_(device_type), device_id_(device_id) {
+        bus_.attach(this);
+    }
     
-    virtual ~CANDevice() = default;
+    virtual ~CANDevice() {
+        bus_.detach(this);
+    }
 
     /**
      * @brief CANパケット受信時の呼び出し関数
@@ -48,13 +53,17 @@ class CANDevice {
     virtual void on_receive(const CANFrame& frame) = 0;
 
     /**
-     * @brief デバイスの種類を取得
-     *
-     * @return id::DeviceType デバイスの種類
+     * @brief ルーティングIDを取得
+     * 
+     * コマンド部を除いた、デバイス特定用の上位ビット列を返します。
+     * 
+     * @return uint32_t Routing ID (Type + DeviceID)
      */
-    id::DeviceType get_device_type() const { return device_type_; }
-
-    uint8_t get_device_id() const { return device_id_; }
+    uint32_t get_routing_id() const {
+        // can_id.hpp の定数を使用して計算
+        return (static_cast<uint32_t>(device_type_) & 0x0F) << (id::BIT_WIDTH_COMMAND + id::BIT_WIDTH_DEV_ID) | 
+               (static_cast<uint32_t>(device_id_) & 0x0F) << id::BIT_WIDTH_COMMAND;
+    }
 
   protected:
     /**
@@ -71,7 +80,7 @@ class CANDevice {
     template <typename CmdEnum>
     bool send(CmdEnum command, const uint8_t* data = nullptr, uint8_t len = 0) {
         auto frame = CANFrame::make(device_type_, device_id_, command, data, len);
-        return manager_.send_frame(frame);
+        return bus_.send_frame(frame);
     }
 
     /**
@@ -106,9 +115,8 @@ class CANDevice {
         return send(command, data.data(), static_cast<uint8_t>(data.size()));
     }
 
-    CANManager& manager_;  // CAN通信をすべて統括するクラスのポインタを保持して送信時に使用する。
-    id::DeviceType device_type_;  // 具体化後クラスのデバイスの種類
-    uint8_t device_id_;           // コンストラクタで設定する、このデバイスのID。送信時に使用する。
+    CANBus& bus_;                 // CAN通信を統括するクラスの参照
+    id::DeviceType device_type_;  // デバイスの種類
+    uint8_t device_id_;           // デバイスID
 };
-
 }  // namespace gn10_can

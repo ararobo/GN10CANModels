@@ -54,8 +54,31 @@ class CANBus {
 
     friend class CANDevice;
 
-    void attach(CANDevice* device);
+    /**
+     * @brief デバイスをバスに接続する (RAII内部利用)
+     * 
+     * CANDeviceのコンストラクタから自動的に呼び出されます。
+     * 
+     * @param device 登録するデバイスへのポインタ
+     * @return true 登録成功
+     * @return false 登録失敗（デバイス数上限）
+     */
+    bool attach(CANDevice* device);
 
+    /**
+     * @brief デバイスをバスから切断する (RAII内部利用)
+     * 
+     * CANDeviceのデストラクタから自動的に呼び出されます。
+     * 
+     * @param device 登録解除するデバイスへのポインタ
+     */
+    void detach(CANDevice* device);
+
+    /**
+     * @brief 受信したフレームを適切なデバイスに配送する
+     * 
+     * @param frame 受信フレーム
+     */
     void dispatch(const CANFrame& frame);
 
     drivers::DriverInterface& driver_;               // CANドライバーインターフェースの参照を保持
