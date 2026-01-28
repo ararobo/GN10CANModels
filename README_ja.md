@@ -81,20 +81,22 @@ public:
 };
 ```
 
-### 2. マネージャーとデバイスのセットアップ
+### 2. バスとデバイスのセットアップ
 
 ```cpp
-#include "gn10_can/core/can_manager.hpp"
+#include "gn10_can/core/can_bus.hpp"
 #include "gn10_can/devices/motor_driver.hpp"
 
 // ... メインループまたはセットアップ内 ...
 
 MyCANDriver driver;
-gn10_can::CANManager manager(driver);
+// 1. バスを初期化（ドライバーを依存注入）
+gn10_can::CANBus bus(driver);
 
-// ID 0 のモータードライバーインスタンスを作成
-gn10_can::devices::MotorDriver motor(manager, 0);
-manager.register_device(&motor);
+// 2. デバイスの初期化
+// RAII: コンストラクタで自動的にバスに接続され、デストラクタで切断されます。
+// 手動での登録は不要です。
+gn10_can::devices::MotorDriver motor(bus, 0);
 
 // コマンドの送信
 motor.send_target(100.0f); // 目標速度/位置を設定
@@ -103,8 +105,8 @@ motor.send_target(100.0f); // 目標速度/位置を設定
 while (true) {
     // 受信メッセージの処理
     // (注: 低遅延のために、CAN受信割り込みやドライバーの受信コールバック関数内で
-    //  manager.update() を直接呼び出すことも可能です)
-    manager.update();
+    //  bus.update() を直接呼び出すことも可能です)
+    bus.update();
 
     // ... アプリケーションロジック ...
 }
@@ -114,7 +116,7 @@ while (true) {
 ```text
 gn10-can/
 ├── include/gn10_can/
-│   ├── core/        # コアロジック (Manager, Device base, Frame)
+│   ├── core/        # コアロジック (Bus, Device base, Frame)
 │   ├── devices/     # デバイス実装 (MotorDriver, etc.)
 │   ├── drivers/     # ハードウェアインターフェース
 │   └── utils/       # ユーティリティ (Converter, etc.)

@@ -11,7 +11,7 @@ elseif(MSVC)
 endif()
 
 set(SOURCES
-    src/core/can_manager.cpp
+    src/core/can_bus.cpp
     src/devices/motor_driver.cpp
     src/devices/motor_driver_types.cpp
 )

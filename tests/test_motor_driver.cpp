@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
 #include "gn10_can/core/can_id.hpp"
-#include "gn10_can/core/can_manager.hpp"
+#include "gn10_can/core/can_bus.hpp"
 #include "gn10_can/devices/motor_driver.hpp"
 #include "gn10_can/utils/can_converter.hpp"
 #include "mock_driver.hpp"
@@ -12,8 +12,8 @@ using namespace gn10_can::devices;
 class MotorDriverTest : public ::testing::Test {
   protected:
     MockDriver driver;
-    CANManager manager{driver};
-    MotorDriver motor{manager, 1};
+    CANBus bus{driver};
+    MotorDriver motor{bus, 1};
 };
 
 TEST_F(MotorDriverTest, SendTarget) {

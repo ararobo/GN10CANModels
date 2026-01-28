@@ -6,7 +6,7 @@
 ## 概要
 
 `gn10-can` は、ハードウェア依存部（ドライバ）とアプリケーションロジック（デバイス制御）を分離し、拡張性と移植性を高めるように設計されています。
-`CANManager` が中心となり、登録された `CANDevice` 群に対してメッセージの配送を行います。
+`CANBus` が中心となり、RAIIによって自動登録された `CANDevice` 群に対してメッセージの配送を行います。
 
 ---
 
@@ -17,8 +17,8 @@
 | クラス / 構造体 | 概要 | 詳細 |
 | :--- | :--- | :--- |
 | **`CANFrame`** | CANフレーム構造体 | CAN ID、データペイロード(最大8バイト)、DLC(データ長)、およびフラグ（拡張ID、RTR、エラー）を保持する基本的なデータ単位です。 |
-| **`CANManager`** | 通信管理者クラス | `DriverInterface` を通じて物理層とのやり取りを行い、登録された `CANDevice` へ受信フレームを配送したり、デバイスからの送信要求をドライバに渡します。最大16台のデバイスを管理できます。 |
-| **`CANDevice`** | デバイス基底クラス | 全てのCANデバイス（モーター、センサ等）の親となる抽象クラスです。自身の `DeviceType` と `DeviceID` を持ち、特定の受信メッセージをフィルタリングして処理するインターフェース (`on_receive`) を提供します。 |
+| **`CANBus`** | 通信管理者クラス | `DriverInterface` を通じて物理層とのやり取りを行い、登録された `CANDevice` へ受信フレームを配送 (`dispatch`) したり、デバイスからの送信要求をドライバに渡します。RAIIによりデバイスの登録・解除を自動管理し、線形探索によるルーティングを行います。 |
+| **`CANDevice`** | デバイス基底クラス | 全てのCANデバイス（モーター、センサ等）の親となる抽象クラスです。コンストラクタで自動的に `CANBus` に接続 (`attach`) し、デストラクタで切断 (`detach`) します。特定の受信メッセージをフィルタリングして処理するインターフェース (`on_receive`) を提供します。 |
 | **`id` (Namespace)** | ID管理・定義 | CAN IDのビットフィールド定義（デバイスタイプ、ID、コマンド）や、それらをパッキング/アンパッキングするヘルパー関数 (`pack`/`unpack`)、各種列挙型を提供します。 |
 
 ### CAN IDの構造 (Standard ID: 11bit)
@@ -72,10 +72,13 @@
 
 ```mermaid
 classDiagram
-    class CANManager {
-        +register_device(CANDevice*)
-        +send_frame(CANFrame)
+    class CANBus {
+        -devices_
+        -driver_
         +update()
+        +send_frame(CANFrame)
+        -attach(CANDevice*)
+        -detach(CANDevice*)
     }
     class CANDevice {
         <<Abstract>>
@@ -92,33 +95,9 @@ classDiagram
         +send_gain(...)
     }
 
-    CANManager "1" o-- "1" DriverInterface
-    CANManager "1" o-- "*" CANDevice
+    CANBus "1" o-- "1" DriverInterface
+    CANBus "1" o-- "*" CANDevice : Manages (RAII)
     DriverInterface <|-- DriverSTM32CAN
     CANDevice <|-- MotorDriver
-```
-
-## 使用例 (擬似コード)
-
-```cpp
-// 1. ドライバとマネージャの初期化
-drivers::DriverSTM32CAN driver(&hcan1);
-core::CANManager manager(driver);
-
-// 2. デバイス(モータードライバ)の作成と登録
-// ID: 0 のモータードライバ
-devices::MotorDriver motor0(manager, 0); 
-manager.register_device(&motor0);
-
-// 3. メインループ
-while (true) {
-    // 受信処理 & 各デバイスへの分配
-    manager.update();
-
-    // モーターへ目標値を送信
-    motor0.send_target(100.0f); 
-    
-    // フィードバック値の取得
-    float velocity = motor0.get_feedback_value();
-}
+    CANDevice ..> CANBus : Attaches to
 ```

@@ -96,20 +96,22 @@ public:
 };
 ```
 
-### 2. Setup Manager and Devices
+### 2. Setup Bus and Devices
 
 ```cpp
-#include "gn10_can/core/can_manager.hpp"
+#include "gn10_can/core/can_bus.hpp"
 #include "gn10_can/devices/motor_driver.hpp"
 
 // ... inside your main loop or setup ...
 
 MyCANDriver driver;
-gn10_can::CANManager manager(driver);
+// 1. Initialize Bus directly with the driver
+gn10_can::CANBus bus(driver);
 
-// Create a motor driver instance with ID 0
-gn10_can::devices::MotorDriver motor(manager, 0);
-manager.register_device(&motor);
+// 2. Initialize Devices
+// RAII: Devices automatically attach to the Bus on construction
+// and detach on destruction. No manual registration needed.
+gn10_can::devices::MotorDriver motor(bus, 0);
 
 // Send commands
 motor.send_target(100.0f); // Set target velocity/position
@@ -117,9 +119,9 @@ motor.send_target(100.0f); // Set target velocity/position
 // Main loop
 while (true) {
     // Process incoming messages.
-    // (Note: You can also call manager.update() directly in the CAN receive
+    // (Note: You can also call bus.update() directly in the CAN receive
     //  interrupt or in the driver's receive callback function for lower latency.)
-    manager.update();
+    bus.update();
 
     // ... your application logic ...
 }
@@ -129,7 +131,7 @@ while (true) {
 ```text
 gn10-can/
 ├── include/gn10_can/
-│   ├── core/        # Core logic (Manager, Device base, Frame)
+│   ├── core/        # Core logic (Bus, Device base, Frame)
 │   ├── devices/     # Device implementations (MotorDriver, etc.)
 │   ├── drivers/     # Hardware interfaces
 │   └── utils/       # Utilities (Converter, etc.)

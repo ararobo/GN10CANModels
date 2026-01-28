@@ -18,27 +18,27 @@ namespace gn10_can {
             + operator!=(other: CANFrame) : bool
         }
 
-        class CANManager {
+        class CANBus {
             + {static} MAX_DEVICES : size_t = 16
             - driver_ : drivers.DriverInterface&
             - devices_ : std::array<CANDevice*, MAX_DEVICES>
             - device_count_ : size_t
-            + CANManager(driver: drivers.DriverInterface&)
-            + register_device(device: CANDevice*) : bool
+            + CANBus(driver: drivers.DriverInterface&)
+            - attach(device: CANDevice*) : bool
+            - detach(device: CANDevice*)
             + update()
             + send_frame(frame: CANFrame) : bool
         }
 
         abstract class CANDevice {
-            # manager_ : CANManager&
+            - bus_ : CANBus&
             # device_type_ : id.DeviceType
             # device_id_ : uint8_t
-            + CANDevice(manager: CANManager&, type: id.DeviceType, id: uint8_t)
+            + CANDevice(bus: CANBus&, type: id.DeviceType, id: uint8_t)
             + {abstract} on_receive(frame: CANFrame)
             + get_device_type() : id.DeviceType
             + get_device_id() : uint8_t
             # send(command: CmdEnum, data: const uint8_t*, len: uint8_t) : bool
-            # send(command: CmdEnum, data: std::initializer_list<uint8_t>) : bool
             # send(command: CmdEnum, data: std::array<uint8_t, N>) : bool
         }
     }
@@ -111,10 +111,10 @@ namespace gn10_can {
         }
     }
 
-    core.CANManager o-- drivers.DriverInterface
-    core.CANManager "1" o-- "0..16" core.CANDevice : manages >
+    core.CANBus o-- drivers.DriverInterface
+    core.CANBus "1" o-- "0..16" core.CANDevice : manages (RAII) >
     core.CANDevice <|-- devices.MotorDriver
-    core.CANDevice ..> core.CANManager : uses >
+    core.CANDevice ..> core.CANBus : attaches to >
     devices.MotorDriver ..> devices.MotorConfig : uses >
     devices.MotorDriver ..> devices.GainType : uses >
     devices.MotorConfig ..> devices.EncoderType : uses >

@@ -11,8 +11,9 @@ namespace gn10_can {
             + flags
         }
 
-        class CANManager {
-            + register_device(device)
+        class CANBus {
+            - attach(device)
+            - detach(device)
             + update()
             + send_frame(frame)
         }
@@ -44,10 +45,10 @@ namespace gn10_can {
         }
     }
 
-    core.CANManager o-- drivers.DriverInterface
-    core.CANManager "1" o-- "*" core.CANDevice : manages >
+    core.CANBus o-- drivers.DriverInterface
+    core.CANBus "1" o-- "*" core.CANDevice : manages (RAII) >
     core.CANDevice <|-- devices.MotorDriver
-    core.CANDevice ..> core.CANManager : uses >
+    core.CANDevice ..> core.CANBus : attaches to >
     devices.MotorDriver ..> devices.MotorConfig : uses >
 }
 

@@ -2,8 +2,8 @@
  * @file can_frame.hpp
  * @author Gento Aiba (aiba-gento)
  * @brief CANフレーム構造体のヘッダーファイル
- * @version 0.1
- * @date 2026-01-10
+ * @version 0.2
+ * @date 2026-01-28
  *
  * @copyright Copyright (c) 2026 Gento Aiba
  * SPDX-License-Identifier: GPL-3.0
@@ -99,6 +99,19 @@ struct CANFrame {
         }
 
         this->dlc = static_cast<uint8_t>(size);
+    }
+
+    /**
+     * @brief ルーティング用のID（Command部を除外）を取得
+     * 
+     * このIDはデバイスの特定に使用され、下位のコマンドビットは無視されます。
+     * can_id.hpp の定義に基づいて計算されます。
+     * 
+     * @return uint32_t ルーティングID (DeviceType + DeviceID)
+     */
+    uint32_t get_routing_id() const {
+        // Commandビット幅分右シフトして切り捨てる
+        return id >> id::BIT_WIDTH_COMMAND;
     }
 
     /**
