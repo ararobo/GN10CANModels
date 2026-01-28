@@ -116,7 +116,7 @@ while (true) {
 ```text
 gn10-can/
 ├── include/gn10_can/
-│   ├── core/        # コアロジック (Manager, Device base, Frame)
+│   ├── core/        # コアロジック (Bus, Device base, Frame)
 │   ├── devices/     # デバイス実装 (MotorDriver, etc.)
 │   ├── drivers/     # ハードウェアインターフェース
 │   └── utils/       # ユーティリティ (Converter, etc.)
