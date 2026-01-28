@@ -101,28 +101,3 @@ classDiagram
     CANDevice <|-- MotorDriver
     CANDevice ..> CANBus : Attaches to
 ```
-
-## 使用例 (擬似コード)
-
-```cpp
-// 1. ドライバとマネージャの初期化
-drivers::DriverSTM32CAN driver(&hcan1);
-core::CANManager manager(driver);
-
-// 2. デバイス(モータードライバ)の作成と登録
-// ID: 0 のモータードライバ
-devices::MotorDriver motor0(manager, 0); 
-manager.register_device(&motor0);
-
-// 3. メインループ
-while (true) {
-    // 受信処理 & 各デバイスへの分配
-    manager.update();
-
-    // モーターへ目標値を送信
-    motor0.send_target(100.0f); 
-    
-    // フィードバック値の取得
-    float velocity = motor0.get_feedback_value();
-}
-```
