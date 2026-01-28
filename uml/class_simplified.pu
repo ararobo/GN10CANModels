@@ -1,0 +1,54 @@
+@startuml class_diagram_simplified
+title gn10-can Simplified Class Diagram
+
+namespace gn10_can {
+
+    namespace core {
+        struct CANFrame {
+            + id
+            + data
+            + dlc
+            + flags
+        }
+
+        class CANManager {
+            + register_device(device)
+            + update()
+            + send_frame(frame)
+        }
+
+        abstract class CANDevice {
+            + {abstract} on_receive(frame)
+            # send(command, data)
+        }
+    }
+
+    namespace drivers {
+        interface DriverInterface {
+            + {abstract} send(frame)
+            + {abstract} receive(out_frame)
+        }
+    }
+
+    namespace devices {
+        class MotorDriver {
+            + send_init(config)
+            + send_target(target)
+            + send_gain(type, value)
+            + on_receive(frame)
+        }
+
+        class MotorConfig {
+            + set_params(...)
+            + to_bytes()
+        }
+    }
+
+    core.CANManager o-- drivers.DriverInterface
+    core.CANManager "1" o-- "*" core.CANDevice : manages >
+    core.CANDevice <|-- devices.MotorDriver
+    core.CANDevice ..> core.CANManager : uses >
+    devices.MotorDriver ..> devices.MotorConfig : uses >
+}
+
+@enduml
