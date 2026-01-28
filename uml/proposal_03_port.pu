@@ -1,0 +1,38 @@
+@startuml proposal_03_port
+package gn10_can {
+    class CANNetworkHub {
+        - ports_: map<uint32_t, CANPort*>
+        - driver_: drivers.DriverInterface&
+        + register_port(port: CANPort*, id: uint32_t): void
+        + update(): void
+    }
+
+    abstract class CANPort {
+        - hub_: CANNetworkHub&
+        - filter_id_: uint32_t
+        + CANPort(hub: CANNetworkHub, id: uint32_t)
+        + send(frame: CANFrame): bool
+        + {abstract} push_receive(frame: CANFrame): void
+    }
+
+    class CANDevice {
+        - port_: CANPort&
+        + CANDevice(port: CANPort)
+        + on_receive(frame: CANFrame): void
+        + some_activity(): void
+    }
+
+    namespace drivers {
+        interface DriverInterface
+    }
+
+    CANNetworkHub --> drivers.DriverInterface
+    
+    ' Relationship
+    CANPort "n" -up- "1" CANNetworkHub : belongs to
+    CANDevice "1" -right- "1" CANPort : has
+    
+    note "CANDevice does not know CANNetworkHub.\nCANNetworkHub does not know CANDevice type." as N1
+    CANPort .. N1
+}
+@enduml

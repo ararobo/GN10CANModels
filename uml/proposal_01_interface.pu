@@ -1,0 +1,40 @@
+@startuml proposal_01_interface
+package gn10_can {
+    interface ICANSender {
+        + {abstract} send_frame(frame: CANFrame): bool
+    }
+
+    interface ICANReceiver {
+        + {abstract} on_receive(frame: CANFrame): void
+        + {abstract} get_target_id(): uint32_t
+    }
+
+    class CANBusController {
+        - router_: map<uint32_t, ICANReceiver*>
+        - driver_: drivers.DriverInterface&
+        + send_frame(frame: CANFrame): bool
+        + register_receiver(receiver: ICANReceiver*): void
+        + update(): void
+    }
+
+    class CANDevice {
+        - sender_: ICANSender&
+        - my_id_: uint32_t
+        + on_receive(frame: CANFrame): void
+        + get_target_id(): uint32_t
+        + do_something(): void
+    }
+
+    namespace drivers {
+        interface DriverInterface
+    }
+
+    CANBusController .up.|> ICANSender
+    CANDevice .up.|> ICANReceiver
+    
+    CANDevice o-- ICANSender : uses (Ref)
+    CANBusController o-- ICANReceiver : manages (Ptr)
+    
+    CANBusController --> drivers.DriverInterface
+}
+@enduml

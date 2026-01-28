@@ -1,0 +1,44 @@
+@startuml proposal_05_modern
+package gn10_can {
+    class CANBus {
+        - devices_: map<uint32_t, CANDevice*>
+        - driver_: drivers.DriverInterface&
+        + attach(device: CANDevice*, id: uint32_t): void
+        + detach(id: uint32_t): void
+        + update(): void
+        + send_raw(frame: CANFrame): bool
+    }
+
+    abstract class CANDevice {
+        - bus_: CANBus&
+        - my_id_: uint32_t
+        + CANDevice(bus: CANBus, id: uint32_t)
+        + ~CANDevice()
+        + send(data: vector<uint8_t>): bool
+        + send(cmd: uint8_t, data: vector<uint8_t>): bool
+        + {abstract} on_receive(frame: CANFrame): void
+    }
+
+    namespace drivers {
+        interface DriverInterface
+    }
+
+    CANBus --> drivers.DriverInterface
+    CANBus o-- CANDevice : "Routing Table"
+    
+    CANDevice --> CANBus : "bus_"
+
+    note right of CANDevice::CANDevice
+      <b>Constructor (RAII)</b>
+      bus_.attach(this, id)
+    end note
+
+    note right of CANDevice::~CANDevice
+      <b>Destructor (RAII)</b>
+      bus_.detach(id)
+    end note
+
+    note "User friendly API.\nAutomatic registration/unregistration." as N1
+    CANDevice .. N1
+}
+@enduml

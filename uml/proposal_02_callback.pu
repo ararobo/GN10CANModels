@@ -1,0 +1,32 @@
+@startuml proposal_02_callback
+package gn10_can {
+    class CANDispatcher {
+        - subscribers_: map<uint32_t, function<void(CANFrame)>>
+        - driver_: drivers.DriverInterface&
+        + subscribe(id: uint32_t, callback: function): void
+        + send_frame(frame: CANFrame): bool
+        + update(): void
+    }
+
+    class CANDevice {
+        - send_func_: function<bool(CANFrame)>
+        + CANDevice(send_func: function)
+        + do_task(): void
+        + on_receive(frame: CANFrame): void
+    }
+
+    namespace drivers {
+        interface DriverInterface
+    }
+
+    CANDispatcher --> drivers.DriverInterface
+    
+    ' Logical relationship via main binding, not direct dependency
+    CANDispatcher ..> CANDevice : "invokes callback"
+    CANDevice ..> CANDispatcher : "invokes callback"
+    
+    note "Coupling is removed.\nLinked via std::function at runtime." as N1
+    CANDevice .. N1
+    CANDispatcher .. N1
+}
+@enduml
