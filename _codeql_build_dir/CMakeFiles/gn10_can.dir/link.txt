@@ -1,0 +1,2 @@
+/usr/bin/ar qc libgn10_can.a CMakeFiles/gn10_can.dir/src/core/can_bus.cpp.o CMakeFiles/gn10_can.dir/src/devices/motor_driver.cpp.o CMakeFiles/gn10_can.dir/src/devices/motor_driver_types.cpp.o
+/usr/bin/ranlib libgn10_can.a

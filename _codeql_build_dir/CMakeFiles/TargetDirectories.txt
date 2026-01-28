@@ -1,0 +1,7 @@
+/home/runner/work/gn10-can/gn10-can/_codeql_build_dir/CMakeFiles/gn10_can.dir
+/home/runner/work/gn10-can/gn10-can/_codeql_build_dir/CMakeFiles/edit_cache.dir
+/home/runner/work/gn10-can/gn10-can/_codeql_build_dir/CMakeFiles/rebuild_cache.dir
+/home/runner/work/gn10-can/gn10-can/_codeql_build_dir/CMakeFiles/list_install_components.dir
+/home/runner/work/gn10-can/gn10-can/_codeql_build_dir/CMakeFiles/install.dir
+/home/runner/work/gn10-can/gn10-can/_codeql_build_dir/CMakeFiles/install/local.dir
+/home/runner/work/gn10-can/gn10-can/_codeql_build_dir/CMakeFiles/install/strip.dir
