@@ -5,10 +5,11 @@
 namespace gn10_can {
 namespace devices {
 
-MotorDriver::MotorDriver(CANManager& manager, uint8_t dev_id)
-    : CANDevice(manager, id::DeviceType::MotorDriver, dev_id) {}
+MotorDriver::MotorDriver(CANBus& bus, uint32_t id)
+    : CANDevice(bus, id) {}
 
 void MotorDriver::send_init(const MotorConfig& config) {
+    // Assuming config.to_bytes() returns an array or vector compatible with send template
     send(id::MsgTypeMotorDriver::Init, config.to_bytes());
 }
 
@@ -40,35 +41,33 @@ void MotorDriver::send_status(float load_current, int8_t temperature) {
 }
 
 void MotorDriver::on_receive(const CANFrame& frame) {
-    auto id_fields = id::unpack(frame.id);
-
-    if (id_fields.type != device_type_ || id_fields.dev_id != device_id_) {
-        return;
+    // New Protocol: Command is in Data[0]
+    if (frame.dlc < 1) return;
+    
+    uint8_t cmd = frame.data[0];
+    
+    // Check if command matches our expectations
+    // Note: Previously checked Type and DeviceID from ID. 
+    // Now filtering is done by CANBus dispatching to my_id_.
+    // So we assume any message reaching here is for us.
+    
+    // Payload is from data[1] onwards.
+    const uint8_t* payload = frame.data.data() + 1;
+    // uint8_t payload_len = frame.dlc - 1; // Unused in unpack if we trust offsets?
+    
+    // Note: unpack takes raw buffer and offsets. 
+    // Previous code: unpack(frame.data.data(), frame.dlc, 0, val);
+    // Be careful with offsets. If payload is shifted by 1 byte (cmd), 
+    // then value at payload[0] is actually frame.data[1].
+    // If we use converter::unpack on `frame.data.data()`, we must adjust offset by +1.
+    
+    if (cmd == static_cast<uint8_t>(id::MsgTypeMotorDriver::Feedback)) {
+        converter::unpack(frame.data.data(), frame.dlc, 1 + 0, feedback_val_);
+        converter::unpack(frame.data.data(), frame.dlc, 1 + 4, limit_sw_state_);
+    } else if (cmd == static_cast<uint8_t>(id::MsgTypeMotorDriver::Status)) {
+        converter::unpack(frame.data.data(), frame.dlc, 1 + 0, load_current_);
+        converter::unpack(frame.data.data(), frame.dlc, 1 + 4, temperature_);
     }
-
-    if (id_fields.is_command(id::MsgTypeMotorDriver::Feedback)) {
-        converter::unpack(frame.data.data(), frame.dlc, 0, feedback_val_);
-        converter::unpack(frame.data.data(), frame.dlc, 4, limit_sw_state_);
-    } else if (id_fields.is_command(id::MsgTypeMotorDriver::Status)) {
-        converter::unpack(frame.data.data(), frame.dlc, 0, load_current_);
-        converter::unpack(frame.data.data(), frame.dlc, 4, temperature_);
-    }
-}
-
-float MotorDriver::get_feedback_value() const {
-    return feedback_val_;
-}
-
-uint8_t MotorDriver::get_limit_switch_state() const {
-    return limit_sw_state_;
-}
-
-float MotorDriver::get_load_current() const {
-    return load_current_;
-}
-
-int8_t MotorDriver::get_temperature() const {
-    return temperature_;
 }
 
 }  // namespace devices

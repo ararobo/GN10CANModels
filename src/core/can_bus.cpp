@@ -1,32 +1,31 @@
-#include "gn10_can/core/can_manager.hpp"
-
+#include "gn10_can/core/can_bus.hpp"
 #include "gn10_can/core/can_device.hpp"
+#include "gn10_can/core/can_frame.hpp"
 
 namespace gn10_can {
 
-CANManager::CANManager(drivers::DriverInterface& driver) : driver_(driver) {}
+CANBus::CANBus(drivers::DriverInterface& driver) : driver_(driver) {}
 
-bool CANManager::register_device(CANDevice* device) {
-    if (device_count_ >= MAX_DEVICES) {
-        return false;
-    }
-
-    devices_[device_count_] = device;
-    device_count_++;
-    return true;
-}
-
-void CANManager::update() {
-    CANFrame rx_frame;
-    while (driver_.receive(rx_frame)) {
-        for (std::size_t i = 0; i < device_count_; ++i) {
-            devices_[i]->on_receive(rx_frame);
+void CANBus::update() {
+    CANFrame frame;
+    while (driver_.receive(frame)) {
+        auto it = devices_.find(frame.id);
+        if (it != devices_.end()) {
+            it->second->on_receive(frame);
         }
     }
 }
 
-bool CANManager::send_frame(const CANFrame& frame) {
+bool CANBus::send_raw(const CANFrame& frame) {
     return driver_.send(frame);
 }
 
-}  // namespace gn10_can
+void CANBus::attach(CANDevice* device, uint32_t rx_id) {
+    devices_[rx_id] = device;
+}
+
+void CANBus::detach(uint32_t rx_id) {
+    devices_.erase(rx_id);
+}
+
+} // namespace gn10_can
