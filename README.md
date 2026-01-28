@@ -107,9 +107,16 @@ public:
 MyCANDriver driver;
 gn10_can::CANManager manager(driver);
 
-// Create a motor driver instance with ID 0
-gn10_can::devices::MotorDriver motor(manager, 0);
-manager.register_device(&motor);
+// MyCANDriver driver; ...
+gn10_can::CANManager manager(driver);
+
+// Create a motor driver instance (Pass pointer to manager)
+// Device ID 1 is for transmission ID generation etc.
+gn10_can::devices::MotorDriver motor(&manager, 1);
+
+// Register device with a specific RX ID for routing
+// Only messages with ID 0x100 will be routed to 'motor'
+manager.register_device(&motor, 0x100);
 
 // Send commands
 motor.send_target(100.0f); // Set target velocity/position

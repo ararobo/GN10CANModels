@@ -25,10 +25,10 @@ class MotorDriver : public CANDevice {
     /**
      * @brief モータードライバー用デバイスクラスのコンストラクタ
      *
-     * @param manager CANManagerクラスの参照
+     * @param manager CANManagerクラスのポインタ (Reference -> Pointer for Prop 4)
      * @param dev_id デバイスID
      */
-    MotorDriver(CANManager& manager, uint8_t dev_id);
+    MotorDriver(CANManager* manager, uint8_t dev_id);
 
     /**
      * @brief モータードライバー初期化コマンド送信関数

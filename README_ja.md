@@ -92,9 +92,16 @@ public:
 MyCANDriver driver;
 gn10_can::CANManager manager(driver);
 
-// ID 0 のモータードライバーインスタンスを作成
-gn10_can::devices::MotorDriver motor(manager, 0);
-manager.register_device(&motor);
+// MyCANDriver driver; ...
+gn10_can::CANManager manager(driver);
+
+// モータードライバーインスタンスを作成 (マネージャーへのポインタを渡す)
+// デバイスID 1 は送信ID生成用
+gn10_can::devices::MotorDriver motor(&manager, 1);
+
+// 受信IDを指定して登録 (ルーティング用)
+// ID 0x100 のメッセージだけが 'motor' に配送されます
+manager.register_device(&motor, 0x100);
 
 // コマンドの送信
 motor.send_target(100.0f); // 目標速度/位置を設定

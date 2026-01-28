@@ -1,67 +1,40 @@
 /**
  * @file can_manager.hpp
- * @author Gento Aiba (aiba-gento)
- * @brief CAN通信を統括するクラスのヘッダーファイル
- * @version 0.1
- * @date 2026-01-10
- *
+ * @description CAN通信統括クラス (Proposal 4: Forward Declaration)
  * @copyright Copyright (c) 2026 Gento Aiba
  * SPDX-License-Identifier: GPL-3.0
  */
 #pragma once
 
-#include <array>
-#include <cstddef>
-
+#include <map>
+#include <cstdint>
 #include "gn10_can/drivers/driver_interface.hpp"
 
 namespace gn10_can {
 
-class CANDevice;
+class CANDevice; // Forward declaration
+class CANFrame;
 
-/**
- * @brief CAN通信を統括するクラス
- *
- */
 class CANManager {
   public:
-    static constexpr std::size_t MAX_DEVICES = 16;  // 最大登録デバイス数
+    static constexpr std::size_t MAX_DEVICES_LEGACY = 16; 
 
-    /**
-     * @brief CANManagerクラスのコンストラクタ
-     *
-     * @param driver CANドライバーインターフェースの参照
-     */
     explicit CANManager(drivers::DriverInterface& driver);
 
-    /**
-     * @brief デバイス登録関数
-     *
-     * @param device 登録するデバイスのポインタ
-     * @return true 登録成功
-     * @return false 登録失敗（登録可能数超過）
-     */
-    bool register_device(CANDevice* device);
-
-    /**
-     * @brief CANパケット受信処理関数
-     *
-     * 登録されているデバイスのon_receive関数を呼び出す
-     */
+    // Modified to take ID explicitly (or extract from device inside implementation)
+    // Proposal 4 suggests registration with ID for routing.
+    void register_device(CANDevice* device, uint32_t rx_id);
+    
+    // Legacy support or if ID is inside device.
+    // If we want to support multiple IDs per device, explicit ID is better.
+    // Let's keep it simple and register by explicit ID (Proposal 4 style routing).
+    
     void update();
 
-    /**
-     * @brief CANフレーム送信関数
-     *
-     * @param frame 送信するCANフレーム
-     * @return true 送信成功
-     * @return false 送信失敗
-     */
     bool send_frame(const CANFrame& frame);
 
   private:
-    drivers::DriverInterface& driver_;               // CANドライバーインターフェースの参照を保持
-    std::array<CANDevice*, MAX_DEVICES> devices_{};  // 登録されているデバイスの配列
-    std::size_t device_count_ = 0;                   // 登録されているデバイス数
+    drivers::DriverInterface& driver_;
+    std::map<uint32_t, CANDevice*> subscribers_;
 };
 }  // namespace gn10_can

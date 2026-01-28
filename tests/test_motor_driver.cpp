@@ -13,7 +13,7 @@ class MotorDriverTest : public ::testing::Test {
   protected:
     MockDriver driver;
     CANManager manager{driver};
-    MotorDriver motor{manager, 1};
+    MotorDriver motor{&manager, 1}; // Use pointer
 };
 
 TEST_F(MotorDriverTest, SendTarget) {

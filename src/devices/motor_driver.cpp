@@ -5,7 +5,7 @@
 namespace gn10_can {
 namespace devices {
 
-MotorDriver::MotorDriver(CANManager& manager, uint8_t dev_id)
+MotorDriver::MotorDriver(CANManager* manager, uint8_t dev_id)
     : CANDevice(manager, id::DeviceType::MotorDriver, dev_id) {}
 
 void MotorDriver::send_init(const MotorConfig& config) {
