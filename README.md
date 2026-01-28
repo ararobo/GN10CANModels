@@ -177,4 +177,4 @@ To ensure cross-platform compatibility:
 This project is licensed under the GNU General Public License v3.0 (GPL-3.0) - see the [LICENSE](LICENSE) file for details.
 
 ## Maintainer
-- **Gento Aiba** - [gento@gn10.org](mailto:gento@gn10.org)
+- Gento Aiba
