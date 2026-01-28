@@ -45,6 +45,12 @@ class CANDevice {
         bus_.detach(this);
     }
 
+    // コピーとムーブを禁止 (RAIIによるデバイス登録の一意性を保つため)
+    CANDevice(const CANDevice&) = delete;
+    CANDevice& operator=(const CANDevice&) = delete;
+    CANDevice(CANDevice&&) = delete;
+    CANDevice& operator=(CANDevice&&) = delete;
+
     /**
      * @brief CANパケット受信時の呼び出し関数
      *
