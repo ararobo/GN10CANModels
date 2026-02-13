@@ -48,6 +48,22 @@ namespace gn10_can {
             + {abstract} send(frame: core.CANFrame) : bool
             + {abstract} receive(out_frame: core.CANFrame) : bool
         }
+
+        class DriverSTM32CAN {
+            - hcan_ : CAN_HandleTypeDef*
+            + DriverSTM32CAN(hcan: CAN_HandleTypeDef*)
+            + init() : bool
+            + send(frame: core.CANFrame) : bool
+            + receive(out_frame: core.CANFrame) : bool
+        }
+
+        class DriverSTM32FDCAN {
+            - hfdcan_ : FDCAN_HandleTypeDef*
+            + DriverSTM32FDCAN(hfdcan: FDCAN_HandleTypeDef*)
+            + init() : bool
+            + send(frame: core.CANFrame) : bool
+            + receive(out_frame: core.CANFrame) : bool
+        }
     }
 
     namespace devices {
@@ -118,6 +134,9 @@ namespace gn10_can {
     devices.MotorDriver ..> devices.MotorConfig : uses >
     devices.MotorDriver ..> devices.GainType : uses >
     devices.MotorConfig ..> devices.EncoderType : uses >
+
+    drivers.DriverInterface <|.. drivers.DriverSTM32CAN
+    drivers.DriverInterface <|.. drivers.DriverSTM32FDCAN
 }
 
 @enduml
