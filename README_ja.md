@@ -169,5 +169,8 @@ target_link_libraries(${PROJECT_NAME} PRIVATE gn10_can)
 ## ライセンス
 このプロジェクトは GNU General Public License v3.0 (GPL-3.0) の下でライセンスされています - 詳細は [LICENSE](LICENSE) ファイルを参照してください。
 
-## メンテナ
-- **Gento Aiba** - [gento@gn10.org](mailto:gento@gn10.org)
+## 協力者・著作者
+- Gento Aiba
+- Watanabe Koichiro
+- Kanai Ayu
+- Kamagata Akeru
