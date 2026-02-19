@@ -20,43 +20,43 @@ float MotorConfig::get_accel_ratio() const {
 }
 
 void MotorConfig::set_forward_limit_switch(bool enable_stop, uint8_t switch_id) {
-    uint8_t val = data_.limit_sw_config;
+    uint8_t val = data_.limit_switches_config;
     // Clear forward bits (7-4)
     val &= 0x0F;
     // Set new forward bits
     if (enable_stop) val |= (1 << 7);
     val |= (switch_id & 0x07) << 4;
-    data_.limit_sw_config = val;
+    data_.limit_switches_config = val;
 }
 
 void MotorConfig::get_forward_limit_switch(bool& enable_stop, uint8_t& switch_id) const {
-    uint8_t val = data_.limit_sw_config;
+    uint8_t val = data_.limit_switches_config;
     enable_stop = (val >> 7) & 0x01;
     switch_id   = (val >> 4) & 0x07;
 }
 
 void MotorConfig::set_reverse_limit_switch(bool enable_stop, uint8_t switch_id) {
-    uint8_t val = data_.limit_sw_config;
+    uint8_t val = data_.limit_switches_config;
     // Clear reverse bits (3-0)
     val &= 0xF0;
     // Set new reverse bits
     if (enable_stop) val |= (1 << 3);
     val |= (switch_id & 0x07);
-    data_.limit_sw_config = val;
+    data_.limit_switches_config = val;
 }
 
 void MotorConfig::get_reverse_limit_switch(bool& enable_stop, uint8_t& switch_id) const {
-    uint8_t val = data_.limit_sw_config;
+    uint8_t val = data_.limit_switches_config;
     enable_stop = (val >> 3) & 0x01;
     switch_id   = val & 0x07;
 }
 
-void MotorConfig::set_telemetry_cycle(uint8_t ms) {
-    data_.telemetry_cycle_ms = ms;
+void MotorConfig::set_feedback_cycle(uint8_t ms) {
+    data_.feedback_cycle_ms = ms;
 }
 
-uint8_t MotorConfig::get_telemetry_cycle() const {
-    return data_.telemetry_cycle_ms;
+uint8_t MotorConfig::get_feedback_cycle() const {
+    return data_.feedback_cycle_ms;
 }
 
 void MotorConfig::set_encoder_type(EncoderType type) {
