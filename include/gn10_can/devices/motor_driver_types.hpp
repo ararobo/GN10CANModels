@@ -47,14 +47,14 @@ class MotorConfig {
     MotorConfig() = default;
 
     /**
-     * @brief 最大デューティ比を制限する (0.0 - 1.0)
+     * @brief 最大duty比を制限する (0.0 - 1.0)
      * @param ratio 0.0 (0%) から 1.0 (100%) の範囲の浮動小数点値
      */
     void set_max_duty_ratio(float ratio);
 
     /**
-     * @brief 設定された最大デューティ比を取得する
-     * @return float 最大デューティ比 (0.0 - 1.0)
+     * @brief 設定された最大duty比を取得する
+     * @return float 最大duty比 (0.0 - 1.0)
      */
     float get_max_duty_ratio() const;
 
@@ -162,16 +162,16 @@ class MotorConfig {
          */
         uint8_t max_duty_ratio;
         /**
-         * @brief 最大加速度 (ランプネート)
-         * 単位: 1ミリ秒あたりの正規化されたデューティ変化量
+         * @brief 最大加速度
+         * 単位: 1ミリ秒あたりの正規化されたduty変化量
          * 範囲: 0 から 255
-         * 例: 値が5の場合、1ミリ秒あたり約2% (5/255) デューティが変化する
+         * 例: 値が5の場合、1ミリ秒あたり約2% (5/255) dutyが変化する
          */
         uint8_t max_accel_rate;
         /**
-         * @brief テレメトリー (フィードバック) 送信周期
+         * @brief フィードバック送信周期
          * 単位: ミリ秒 (ms)
-         * 0の場合、テレメトリーは無効
+         * 0の場合、フィードバックは無効
          */
         uint8_t feedback_cycle_ms;
         /**
