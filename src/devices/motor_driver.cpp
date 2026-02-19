@@ -36,7 +36,7 @@ void MotorDriver::send_status(float load_current, int8_t temperature) {
     std::array<uint8_t, 5> payload{};
     converter::pack(payload, 0, load_current);
     converter::pack(payload, 4, temperature);
-    send(id::MsgTypeMotorDriver::Status, payload);
+    send(id::MsgTypeMotorDriver::HardwareStatus, payload);
 }
 
 void MotorDriver::on_receive(const CANFrame& frame) {
@@ -49,7 +49,7 @@ void MotorDriver::on_receive(const CANFrame& frame) {
     if (id_fields.is_command(id::MsgTypeMotorDriver::Feedback)) {
         converter::unpack(frame.data.data(), frame.dlc, 0, feedback_val_);
         converter::unpack(frame.data.data(), frame.dlc, 4, limit_sw_state_);
-    } else if (id_fields.is_command(id::MsgTypeMotorDriver::Status)) {
+    } else if (id_fields.is_command(id::MsgTypeMotorDriver::HardwareStatus)) {
         converter::unpack(frame.data.data(), frame.dlc, 0, load_current_);
         converter::unpack(frame.data.data(), frame.dlc, 4, temperature_);
     }

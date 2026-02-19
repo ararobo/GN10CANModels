@@ -1,7 +1,7 @@
 #include <gtest/gtest.h>
 
-#include "gn10_can/core/can_id.hpp"
 #include "gn10_can/core/can_bus.hpp"
+#include "gn10_can/core/can_id.hpp"
 #include "gn10_can/devices/motor_driver.hpp"
 #include "gn10_can/utils/can_converter.hpp"
 #include "mock_driver.hpp"
@@ -63,7 +63,7 @@ TEST_F(MotorDriverTest, ReceiveStatus) {
     converter::pack(data, 4, temperature);
 
     CANFrame frame = CANFrame::make(
-        id::DeviceType::MotorDriver, 1, id::MsgTypeMotorDriver::Status, data.data(), 5);
+        id::DeviceType::MotorDriver, 1, id::MsgTypeMotorDriver::HardwareStatus, data.data(), 5);
 
     motor.on_receive(frame);
 

@@ -49,11 +49,11 @@ enum class MsgTypeEmergencyStop : uint8_t {
  *
  */
 enum class MsgTypeMotorDriver : uint8_t {
-    Init     = 0,
-    Target   = 1,
-    Gain     = 3,
-    Feedback = 4,
-    Status   = 5,
+    Init           = 0,
+    Target         = 1,
+    Gain           = 3,
+    Feedback       = 4,
+    HardwareStatus = 5,
 };
 
 /**
