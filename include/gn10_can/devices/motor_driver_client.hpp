@@ -10,6 +10,8 @@
  */
 #pragma once
 
+#include <optional>
+
 #include "gn10_can/core/can_device.hpp"
 #include "gn10_can/devices/motor_driver_types.hpp"
 
@@ -87,10 +89,10 @@ class MotorDriverClient : public CANDevice {
     int8_t temperature() const;
 
   private:
-    float feedback_value_{0.0f};
-    uint8_t limit_switches_{0};
-    float load_current_{0.0f};
-    int8_t temperature_{0};
+    std::optional<float> feedback_value_;
+    std::optional<uint8_t> limit_switches_;
+    std::optional<float> load_current_;
+    std::optional<int8_t> temperature_;
 };
 }  // namespace devices
 }  // namespace gn10_can

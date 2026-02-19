@@ -10,6 +10,8 @@
  */
 #pragma once
 
+#include <optional>
+
 #include "gn10_can/core/can_device.hpp"
 #include "gn10_can/devices/motor_driver_types.hpp"
 
@@ -84,12 +86,9 @@ class MotorDriverServer : public CANDevice {
   private:
     static constexpr std::size_t kGainTypeCount = static_cast<std::size_t>(GainType::Count);
 
-    MotorConfig config_;
-    bool is_config_updated_{false};
-    float target_{0.0f};
-    bool is_target_updated_{false};
-    float gains_[kGainTypeCount]{0.0f};
-    bool is_gains_updated_[kGainTypeCount]{false};
+    std::optional<MotorConfig> config_;
+    std::optional<float> target_;
+    std::optional<float> gains_[kGainTypeCount];
 };
 }  // namespace devices
 }  // namespace gn10_can
