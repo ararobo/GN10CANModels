@@ -89,10 +89,10 @@ class MotorDriverClient : public CANDevice {
     int8_t temperature() const;
 
   private:
-    std::optional<float> feedback_value_;
-    std::optional<uint8_t> limit_switches_;
-    std::optional<float> load_current_;
-    std::optional<int8_t> temperature_;
+    float feedback_value_{0.0f};
+    uint8_t limit_switches_{0};
+    float load_current_{0.0f};
+    int8_t temperature_{0};
 };
 }  // namespace devices
 }  // namespace gn10_can
