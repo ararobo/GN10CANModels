@@ -1,4 +1,6 @@
-.vscode
+.vscode/*
+!.vscode/settings.json
+!.vscode/copilot-instructions.md
 build
 **/build
 .cache
