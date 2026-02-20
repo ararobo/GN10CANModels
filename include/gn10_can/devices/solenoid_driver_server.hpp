@@ -10,6 +10,8 @@
  */
 #pragma once
 
+#include <optional>
+
 #include "gn10_can/core/can_device.hpp"
 
 namespace gn10_can {
@@ -42,8 +44,7 @@ class SolenoidDriverServer : CANDevice {
     void on_receive(const CANFrame& frame) override;
 
   private:
-    bool target_{false};
-    bool is_target_updated_{false};
+    std::optional<bool> target_;
 };
 
 }  // namespace devices
