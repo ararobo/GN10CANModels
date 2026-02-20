@@ -1,3 +1,13 @@
+/**
+ * @file solenoid_driver_client.hpp
+ * @author Koichiro Watanabe (watanabe-koichiro)
+ * @brief ソレノイドドライバ用デバイスクラスのヘッダーファイル
+ * @version 0.1
+ * @date 2026-02-18
+ *
+ * @copyright Copyright (c) 2026
+ *
+ */
 #pragma once
 
 #include "gn10_can/core/can_device.hpp"
@@ -14,12 +24,6 @@ class SolenoidDriverClient : CANDevice {
      * @param dev_id デバイスID
      */
     SolenoidDriverClient(CANBus& bus, uint8_t dev_id);
-
-    /**
-     * @brief ソレノイドドライバー初期化コマンド送信関数
-     *
-     */
-    void set_init();
 
     /**
      * @brief ソレノイドドライバー目標値コマンド送信関数
