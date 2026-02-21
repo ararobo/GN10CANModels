@@ -105,6 +105,7 @@ namespace gn10_can {
         class SolenoidDriverClient {
             + SolenoidDriverClient(bus: core.CANBus&, dev_id: uint8_t)
             + set_target(target: bool)
+            + on_receive(frame: core.CANFrame)
         }
 
         class SolenoidDriverServer {
