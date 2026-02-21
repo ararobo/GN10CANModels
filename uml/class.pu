@@ -62,6 +62,10 @@ namespace gn10_can {
             + send(frame: core.CANFrame) : bool
             + receive(out_frame: core.CANFrame) : bool
         }
+
+        class "DriverAnyPlatform..." as DriverESP32_SocketCAN <<Future>> {
+            note: ESP32, SocketCAN(Linux/ROS2), etc...
+        }
     }
 
     namespace devices {
@@ -92,6 +96,22 @@ namespace gn10_can {
             + get_new_target(target: float&) : bool
             + get_new_gain(type: GainType, value: float&) : bool
             + on_receive(frame: core.CANFrame)
+        }
+
+        class SolenoidDriverClient {
+            + SolenoidDriverClient(bus: core.CANBus&, dev_id: uint8_t)
+            + set_target(target: bool)
+        }
+
+        class SolenoidDriverServer {
+            - target_ : std::optional<bool>
+            + SolenoidDriverServer(bus: core.CANBus&, dev_id: uint8_t)
+            + get_new_target(target: bool&) : bool
+            + on_receive(frame: core.CANFrame)
+        }
+
+        class "OtherDevice..." as OtherDevice_SensorHub_ServoDriver <<Future>> {
+            note: ServoDriver, SensorHub, etc...
         }
 
         class MotorConfig {
@@ -142,6 +162,9 @@ namespace gn10_can {
     core.CANBus "1" o-- "0..16" core.CANDevice : manages (RAII) >
     core.CANDevice <|-- devices.MotorDriverClient
     core.CANDevice <|-- devices.MotorDriverServer
+    core.CANDevice <|-- devices.SolenoidDriverClient
+    core.CANDevice <|-- devices.SolenoidDriverServer
+    core.CANDevice <|-- devices.OtherDevice_SensorHub_ServoDriver
     core.CANDevice ..> core.CANBus : attaches to >
     devices.MotorDriverClient ..> devices.MotorConfig : uses >
     devices.MotorDriverServer ..> devices.MotorConfig : uses >
@@ -151,6 +174,7 @@ namespace gn10_can {
 
     drivers.DriverInterface <|.. drivers.DriverSTM32CAN
     drivers.DriverInterface <|.. drivers.DriverSTM32FDCAN
+    drivers.DriverInterface <|.. drivers.DriverESP32_SocketCAN
 }
 
 @enduml
