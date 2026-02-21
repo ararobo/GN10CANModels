@@ -83,7 +83,8 @@ public:
 
 ```cpp
 #include "gn10_can/core/can_bus.hpp"
-#include "gn10_can/devices/motor_driver.hpp"
+#include "gn10_can/devices/motor_driver_client.hpp"
+#include "gn10_can/devices/solenoid_driver_client.hpp"
 
 // ... メインループまたはセットアップ内 ...
 
@@ -94,10 +95,12 @@ gn10_can::CANBus bus(driver);
 // 2. デバイスの初期化
 // RAII: コンストラクタで自動的にバスに接続され、デストラクタで切断されます。
 // 手動での登録は不要です。
-gn10_can::devices::MotorDriverClient motor(bus, 0);
+gn10_can::devices::MotorDriverClient motor(bus, 0);       // モータードライバー (ID: 0)
+gn10_can::devices::SolenoidDriverClient solenoid(bus, 1); // ソレノイドドライバー (ID: 1)
 
 // コマンドの送信
-motor.set_target(100.0f); // 目標速度/位置を設定
+motor.set_target(100.0f); // モーターの目標速度/位置を設定
+solenoid.set_target(true); // ソレノイドをONに設定
 
 // メインループ
 while (true) {
@@ -129,8 +132,7 @@ gn10-can/
 
 ![class diagram simplified](uml/class_diagram_simplified.png)
 
-クラス図全体：
-![class diagram](uml/class_diagram.png)
+[クラス図の詳細](uml/class_diagram.png)
 
 ## プロジェクトへの取り込み
 `git submodule`でプロジェクトに追加し、CMakeLists.txtに以下を追記してください。
