@@ -115,8 +115,10 @@ namespace gn10_can {
         }
 
         class "OtherDevice..." as OtherDevice_SensorHub_ServoDriver <<Future>> {
-            note: ServoDriver, SensorHub, etc...
         }
+        
+        note "ServoDriver, SensorHub, etc..." as Note_OtherDevice
+        Note_OtherDevice .. OtherDevice_SensorHub_ServoDriver
 
         class MotorConfig {
             + set_max_duty_ratio(ratio: float)
