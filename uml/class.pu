@@ -66,8 +66,10 @@ namespace gn10_can {
         }
 
         class "DriverAnyPlatform..." as DriverESP32_SocketCAN <<Future>> {
-            note: ESP32, SocketCAN(Linux/ROS2), etc...
         }
+
+        note "ESP32, SocketCAN(Linux/ROS2), etc..." as Note_DriverESP32_SocketCAN
+        Note_DriverESP32_SocketCAN .. DriverESP32_SocketCAN
     }
 
     namespace devices {
