@@ -37,7 +37,7 @@ namespace gn10_can {
             # device_id_ : uint8_t
             + CANDevice(bus: CANBus&, type: id.DeviceType, id: uint8_t)
             + {abstract} on_receive(frame: CANFrame)
-            + get_routing_id() : uint32_t
+            + get_routing_id() const : uint32_t
             # send(command: CmdEnum, data: const uint8_t*, len: uint8_t) : bool
             # send(command: CmdEnum, data: std::array<uint8_t, N>) : bool
         }
