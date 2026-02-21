@@ -1,8 +1,6 @@
 # GN10 CAN Library
 [![CI](https://github.com/ararobo/gn10-can/actions/workflows/test.yml/badge.svg)](https://github.com/ararobo/gn10-can/actions/workflows/test.yml)
-![ROS 2 Version](https://img.shields.io/badge/ROS%202-Humble-blue)
 ![Platform](https://img.shields.io/badge/Platform-STM32%20|%20ESP32%20|%20ROS2-blue)
-![License](https://img.shields.io/badge/License-GPLv3-green)
 
 [日本語 (Japanese)](README_ja.md)
 
