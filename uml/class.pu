@@ -27,8 +27,8 @@ namespace gn10_can {
             - attach(device: CANDevice*) : bool
             - detach(device: CANDevice*)
             + update()
-            - dispatch(frame: CANFrame)
-            + send_frame(frame: CANFrame) : bool
+            - dispatch(frame: const CANFrame&)
+            + send_frame(frame: const CANFrame&) : bool
         }
 
         abstract class CANDevice {
