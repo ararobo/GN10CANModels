@@ -40,10 +40,15 @@ namespace gn10_can {
     }
 
     namespace devices {
-        class MotorDriver {
-            + send_init(config)
-            + send_target(target)
-            + send_gain(type, value)
+        class MotorDriverClient {
+            + set_init(config)
+            + set_target(target)
+            + set_gain(type, value)
+            + on_receive(frame)
+        }
+
+        class MotorDriverServer {
+            + send_feedback(val, state)
             + on_receive(frame)
         }
 
@@ -55,9 +60,11 @@ namespace gn10_can {
 
     core.CANBus o-- drivers.DriverInterface
     core.CANBus "1" o-- "*" core.CANDevice : manages (RAII) >
-    core.CANDevice <|-- devices.MotorDriver
+    core.CANDevice <|-- devices.MotorDriverClient
+    core.CANDevice <|-- devices.MotorDriverServer
     core.CANDevice ..> core.CANBus : attaches to >
-    devices.MotorDriver ..> devices.MotorConfig : uses >
+    devices.MotorDriverClient ..> devices.MotorConfig : uses >
+    devices.MotorDriverServer ..> devices.MotorConfig : uses >
 
     drivers.DriverInterface <|.. drivers.DriverSTM32CAN
     drivers.DriverInterface <|.. drivers.DriverSTM32FDCAN

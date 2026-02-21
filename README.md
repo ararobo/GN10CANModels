@@ -142,8 +142,9 @@ gn10-can/
 ```
 
 ## Class Diagram
+Class diagram (simplified)
 
-![Class Diagram](uml/class_diagram.png)
+![class diagram simplified](uml/class_diagram_simplified.png)
 
 ## Development Rules
 

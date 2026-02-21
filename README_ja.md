@@ -127,8 +127,9 @@ gn10-can/
 ```
 
 ## クラス図
+クラス図（簡略化済み）
 
-![Class Diagram](uml/class_diagram.png)
+![class diagram simplified](uml/class_diagram_simplified.png)
 
 ## プロジェクトへの取り込み
 `git submodule`でプロジェクトに追加し、CMakeLists.txtに以下を追記してください。
