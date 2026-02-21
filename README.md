@@ -1,8 +1,6 @@
 # GN10 CAN Library
 [![CI](https://github.com/ararobo/gn10-can/actions/workflows/test.yml/badge.svg)](https://github.com/ararobo/gn10-can/actions/workflows/test.yml)
-![ROS 2 Version](https://img.shields.io/badge/ROS%202-Humble-blue)
 ![Platform](https://img.shields.io/badge/Platform-STM32%20|%20ESP32%20|%20ROS2-blue)
-![License](https://img.shields.io/badge/License-GPLv3-green)
 
 [日本語 (Japanese)](README_ja.md)
 
@@ -100,7 +98,8 @@ public:
 
 ```cpp
 #include "gn10_can/core/can_bus.hpp"
-#include "gn10_can/devices/motor_driver.hpp"
+#include "gn10_can/devices/motor_driver_client.hpp"
+#include "gn10_can/devices/solenoid_driver_client.hpp"
 
 // ... inside your main loop or setup ...
 
@@ -111,10 +110,12 @@ gn10_can::CANBus bus(driver);
 // 2. Initialize Devices
 // RAII: Devices automatically attach to the Bus on construction
 // and detach on destruction. No manual registration needed.
-gn10_can::devices::MotorDriverClient motor(bus, 0);
+gn10_can::devices::MotorDriverClient motor(bus, 0);       // Motor Driver (ID: 0)
+gn10_can::devices::SolenoidDriverClient solenoid(bus, 1); // Solenoid Driver (ID: 1)
 
 // Send commands
-motor.set_target(100.0f); // Set target velocity/position
+motor.set_target(100.0f); // Set target velocity/position to Motor
+solenoid.set_target(true); // Turn on Solenoid
 
 // Main loop
 while (true) {
@@ -142,8 +143,11 @@ gn10-can/
 ```
 
 ## Class Diagram
+Class diagram (simplified)
 
-![Class Diagram](uml/class_diagram.png)
+![Class diagram simplified](uml/class_diagram_simplified.png)
+
+[Class diagram detail](uml/class_diagram.png)
 
 ## Development Rules
 

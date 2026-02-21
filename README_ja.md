@@ -1,8 +1,6 @@
 # GN10 CAN Library
 [![CI](https://github.com/ararobo/gn10-can/actions/workflows/test.yml/badge.svg)](https://github.com/ararobo/gn10-can/actions/workflows/test.yml)
-![ROS 2 Version](https://img.shields.io/badge/ROS%202-Humble-blue)
 ![Platform](https://img.shields.io/badge/Platform-STM32%20|%20ESP32%20|%20ROS2-blue)
-![License](https://img.shields.io/badge/License-GPLv3-green)
 
 CANバスのデータモデル、ID定義、およびハンドリングクラス。
 
@@ -85,7 +83,8 @@ public:
 
 ```cpp
 #include "gn10_can/core/can_bus.hpp"
-#include "gn10_can/devices/motor_driver.hpp"
+#include "gn10_can/devices/motor_driver_client.hpp"
+#include "gn10_can/devices/solenoid_driver_client.hpp"
 
 // ... メインループまたはセットアップ内 ...
 
@@ -96,10 +95,12 @@ gn10_can::CANBus bus(driver);
 // 2. デバイスの初期化
 // RAII: コンストラクタで自動的にバスに接続され、デストラクタで切断されます。
 // 手動での登録は不要です。
-gn10_can::devices::MotorDriverClient motor(bus, 0);
+gn10_can::devices::MotorDriverClient motor(bus, 0);       // モータードライバー (ID: 0)
+gn10_can::devices::SolenoidDriverClient solenoid(bus, 1); // ソレノイドドライバー (ID: 1)
 
 // コマンドの送信
-motor.set_target(100.0f); // 目標速度/位置を設定
+motor.set_target(100.0f); // モーターの目標速度/位置を設定
+solenoid.set_target(true); // ソレノイドをONに設定
 
 // メインループ
 while (true) {
@@ -127,8 +128,11 @@ gn10-can/
 ```
 
 ## クラス図
+クラス図（簡略化済み）
 
-![Class Diagram](uml/class_diagram.png)
+![class diagram simplified](uml/class_diagram_simplified.png)
+
+[クラス図の詳細](uml/class_diagram.png)
 
 ## プロジェクトへの取り込み
 `git submodule`でプロジェクトに追加し、CMakeLists.txtに以下を追記してください。

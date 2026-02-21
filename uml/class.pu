@@ -4,7 +4,7 @@ namespace gn10_can {
 
     namespace core {
         struct CANFrame {
-            + {static} MAX_DLC : size_t
+            + {static} MAX_DLC : size_t = 8
             + id : uint32_t
             + data : std::array<uint8_t, MAX_DLC>
             + dlc : uint8_t
@@ -14,8 +14,8 @@ namespace gn10_can {
             + {static} make(type: DeviceType, dev_id: uint8_t, cmd: CmdEnum, payload: uint8_t*, length: size_t) : CANFrame
             + {static} make(type: DeviceType, dev_id: uint8_t, cmd: CmdEnum, payload: std::initializer_list<uint8_t>) : CANFrame
             + set_data(payload: const uint8_t*, length: size_t)
-            + operator==(other: CANFrame) : bool
-            + operator!=(other: CANFrame) : bool
+            + operator==(other: const CANFrame&) const : bool
+            + operator!=(other: const CANFrame&) const : bool
         }
 
         class CANBus {
@@ -27,7 +27,8 @@ namespace gn10_can {
             - attach(device: CANDevice*) : bool
             - detach(device: CANDevice*)
             + update()
-            + send_frame(frame: CANFrame) : bool
+            - dispatch(frame: const CANFrame&)
+            + send_frame(frame: const CANFrame&) : bool
         }
 
         abstract class CANDevice {
@@ -36,8 +37,7 @@ namespace gn10_can {
             # device_id_ : uint8_t
             + CANDevice(bus: CANBus&, type: id.DeviceType, id: uint8_t)
             + {abstract} on_receive(frame: CANFrame)
-            + get_device_type() : id.DeviceType
-            + get_device_id() : uint8_t
+            + get_routing_id() const : uint32_t
             # send(command: CmdEnum, data: const uint8_t*, len: uint8_t) : bool
             # send(command: CmdEnum, data: std::array<uint8_t, N>) : bool
         }
@@ -64,26 +64,62 @@ namespace gn10_can {
             + send(frame: core.CANFrame) : bool
             + receive(out_frame: core.CANFrame) : bool
         }
+
+        class "DriverAnyPlatform..." as DriverESP32_SocketCAN <<Future>> {
+        }
+
+        note "ESP32, SocketCAN(Linux/ROS2), etc..." as Note_DriverESP32_SocketCAN
+        Note_DriverESP32_SocketCAN .. DriverESP32_SocketCAN
     }
 
     namespace devices {
-        class MotorDriver {
-            - feedback_val_ : float
-            - limit_sw_state_ : uint8_t
+        class MotorDriverClient {
+            - feedback_value_ : float
+            - limit_switches_ : uint8_t
             - load_current_ : float
             - temperature_ : int8_t
-            + MotorDriver(manager: core.CANManager&, dev_id: uint8_t)
-            + send_init(config: MotorConfig)
-            + send_target(target: float)
-            + send_gain(type: GainType, value: float)
-            + send_feedback(current_val: float, limit_switch_state: uint8_t)
-            + send_status(load_current: float, temperature: int8_t)
+            + MotorDriverClient(bus: core.CANBus&, dev_id: uint8_t)
+            + set_init(config: MotorConfig)
+            + set_target(target: float)
+            + set_gain(type: GainType, value: float)
             + on_receive(frame: core.CANFrame)
-            + get_feedback_value() : float
-            + get_limit_switch_state() : uint8_t
-            + get_load_current() : float
-            + get_temperature() : int8_t
+            + feedback_value() : float
+            + limit_switches() : uint8_t
+            + load_current() : float
+            + temperature() : int8_t
         }
+
+        class MotorDriverServer {
+            - config_ : std::optional<MotorConfig>
+            - target_ : std::optional<float>
+            - gains_ : std::optional<float>[kGainTypeCount]
+            + MotorDriverServer(bus: core.CANBus&, dev_id: uint8_t)
+            + send_feedback(feedback_val, limit_switch_state)
+            + send_hardware_status(load_current, temperature)
+            + get_new_init(config: MotorConfig&) : bool
+            + get_new_target(target: float&) : bool
+            + get_new_gain(type: GainType, value: float&) : bool
+            + on_receive(frame: core.CANFrame)
+        }
+
+        class SolenoidDriverClient {
+            + SolenoidDriverClient(bus: core.CANBus&, dev_id: uint8_t)
+            + set_target(target: bool)
+            + on_receive(frame: core.CANFrame)
+        }
+
+        class SolenoidDriverServer {
+            - target_ : std::optional<bool>
+            + SolenoidDriverServer(bus: core.CANBus&, dev_id: uint8_t)
+            + get_new_target(target: bool&) : bool
+            + on_receive(frame: core.CANFrame)
+        }
+
+        class "OtherDevice..." as OtherDevice_SensorHub_ServoDriver <<Future>> {
+        }
+        
+        note "ServoDriver, SensorHub, etc..." as Note_OtherDevice
+        Note_OtherDevice .. OtherDevice_SensorHub_ServoDriver
 
         class MotorConfig {
             + set_max_duty_ratio(ratio: float)
@@ -94,8 +130,8 @@ namespace gn10_can {
             + get_forward_limit_switch(enable_stop: bool&, switch_id: uint8_t&)
             + set_reverse_limit_switch(enable_stop: bool, switch_id: uint8_t)
             + get_reverse_limit_switch(enable_stop: bool&, switch_id: uint8_t&)
-            + set_telemetry_cycle(ms: uint8_t)
-            + get_telemetry_cycle() : uint8_t
+            + set_feedback_cycle(ms: uint8_t)
+            + get_feedback_cycle() : uint8_t
             + set_encoder_type(type: EncoderType)
             + get_encoder_type() : EncoderType
             + set_user_option(option: uint8_t)
@@ -117,26 +153,35 @@ namespace gn10_can {
             Ki
             Kd
             Ff
+            Count
         }
     }
     
     namespace converter {
         class can_converter << (U, #FF7700) Utility >> {
             + {static} pack(buffer: uint8_t*, buffer_len: size_t, start_byte: uint8_t, value: T) : bool
-            + {static} unpack(buffer: uint8_t*, buffer_len: size_t, start_byte: uint8_t, value: T&) : bool
+            + {static} unpack(buffer: const uint8_t*, buffer_len: size_t, start_byte: uint8_t, value: T&) : bool
+            + {static} pack(buffer: std::array<uint8_t, N>&, start_byte: uint8_t, value: T) : bool
         }
     }
 
     core.CANBus o-- drivers.DriverInterface
     core.CANBus "1" o-- "0..16" core.CANDevice : manages (RAII) >
-    core.CANDevice <|-- devices.MotorDriver
+    core.CANDevice <|-- devices.MotorDriverClient
+    core.CANDevice <|-- devices.MotorDriverServer
+    core.CANDevice <|-- devices.SolenoidDriverClient
+    core.CANDevice <|-- devices.SolenoidDriverServer
+    core.CANDevice <|-- devices.OtherDevice_SensorHub_ServoDriver
     core.CANDevice ..> core.CANBus : attaches to >
-    devices.MotorDriver ..> devices.MotorConfig : uses >
-    devices.MotorDriver ..> devices.GainType : uses >
+    devices.MotorDriverClient ..> devices.MotorConfig : uses >
+    devices.MotorDriverServer ..> devices.MotorConfig : uses >
+    devices.MotorDriverClient ..> devices.GainType : uses >
+    devices.MotorDriverServer ..> devices.GainType : uses >
     devices.MotorConfig ..> devices.EncoderType : uses >
 
     drivers.DriverInterface <|.. drivers.DriverSTM32CAN
     drivers.DriverInterface <|.. drivers.DriverSTM32FDCAN
+    drivers.DriverInterface <|.. drivers.DriverESP32_SocketCAN
 }
 
 @enduml
