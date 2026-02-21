@@ -65,6 +65,7 @@ namespace gn10_can {
 
         class SolenoidDriverClient {
             + set_target(target: bool)
+            + on_receive(frame)
         }
 
         class SolenoidDriverServer {
