@@ -34,7 +34,7 @@ class CANBus {
      *
      * @param driver CANドライバーインターフェースの参照
      */
-    explicit CANBus(drivers::DriverInterface& driver);
+    explicit CANBus(drivers::ICanDriver& driver);
 
     /**
      * @brief CANパケットの受信とデバイスへのルーティング処理
@@ -82,7 +82,7 @@ class CANBus {
      */
     void dispatch(const CANFrame& frame);
 
-    drivers::DriverInterface& driver_;               // CANドライバーインターフェースの参照を保持
+    drivers::ICanDriver& driver_;                    // CANドライバーインターフェースの参照を保持
     std::array<CANDevice*, MAX_DEVICES> devices_{};  // 登録されているデバイスの配列
     std::size_t device_count_ = 0;                   // 登録されているデバイス数
 };

@@ -5,8 +5,7 @@
 
 #include "gn10_can/drivers/driver_interface.hpp"
 
-
-class MockDriver : public gn10_can::drivers::DriverInterface {
+class MockDriver : public gn10_can::drivers::ICanDriver {
   public:
     bool send(const gn10_can::CANFrame& frame) override {
         sent_frames.push_back(frame);
