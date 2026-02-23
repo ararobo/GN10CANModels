@@ -75,6 +75,13 @@ else()
         $<INSTALL_INTERFACE:include>
     )
 
+    # STM32 ドライバのヘッダを公開 (HAL ヘッダは利用側が提供する)
+    if(ENABLE_STM32_DRIVERS)
+        target_include_directories(${PROJECT_NAME} PUBLIC
+            $<BUILD_INTERFACE:${CMAKE_CURRENT_SOURCE_DIR}>
+        )
+    endif()
+
     install(TARGETS ${PROJECT_NAME} DESTINATION lib)
     install(DIRECTORY include/ DESTINATION include)
 
