@@ -39,6 +39,13 @@ class SolenoidDriverClient : public CANDevice {
      */
     void on_receive(const CANFrame& frame) override;
 
+    /**
+     * @brief 最新のフィードバック値を取得する
+     *
+     * @return float フィードバック値
+     */
+    bool feedback_value() const;
+
   private:
     bool feedback_value_{false};
 };

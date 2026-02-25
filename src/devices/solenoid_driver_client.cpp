@@ -29,5 +29,9 @@ void SolenoidDriverClient::on_receive(const CANFrame& frame) {
     }
 }
 
+bool SolenoidDriverClient::feedback_value() const {
+    return feedback_value_;
+}
+
 }  // namespace devices
 }  // namespace gn10_can
