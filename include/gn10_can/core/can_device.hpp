@@ -81,7 +81,7 @@ class CANDevice {
      * @return false 送信失敗（CANDriverの継承後クラスによって定義）
      */
     template <typename CmdEnum>
-    bool send(CmdEnum command, const uint8_t* data = nullptr, uint8_t len = 0) {
+    bool send(CmdEnum command, const uint8_t* data = nullptr, std::size_t len = 0) {
         auto frame = CANFrame::make(device_type_, device_id_, command, data, len);
         return bus_.send_frame(frame);
     }
