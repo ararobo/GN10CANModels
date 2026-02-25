@@ -79,26 +79,29 @@ struct CANFrame {
     }
 
     /**
-     * @brief CANフレーム作成ヘルパー関数（array版）
+     * @brief CANフレームにデータを入れる関数
      *
-     * @tparam CmdEnum コマンドの列挙型
-     * @tparam N 送信データ長：1~8
-     * @param type デバイスの種類
-     * @param dev_id デバイスのID
-     * @param cmd コマンド
-     * @param payload 送信データ（要素数1~8のarray配列）
-     * @return CANFrame 生成したCANフレーム
+     * @param payload 入れるデータ
+     * @param length データの長さ[byte]
      */
     void set_data(const uint8_t* payload, std::size_t length) {
-        std::size_t size = (length < MAX_DLC) ? length : MAX_DLC;
+        // データサイズをMAX_DLC以下に制限
+        std::size_t size;
+        if (length < MAX_DLC) {
+            size = length;
+        } else {
+            size = MAX_DLC;
+        }
+        // データをフレームのメンバ変数に入れる
         if (payload != nullptr && size > 0) {
             std::copy(payload, payload + size, data.begin());
         }
+        // 書き込んだデータ以外を0で埋める
         if (size < MAX_DLC) {
             std::fill(data.begin() + size, data.end(), static_cast<uint8_t>(0));
         }
 
-        this->dlc = static_cast<uint8_t>(size);
+        dlc = static_cast<uint8_t>(size);
     }
 
     /**
@@ -127,10 +130,7 @@ struct CANFrame {
             return false;
         }
 
-        std::size_t loop_limit =
-            (static_cast<std::size_t>(dlc) > MAX_DLC) ? MAX_DLC : static_cast<std::size_t>(dlc);
-
-        for (std::size_t i = 0; i < loop_limit; ++i) {
+        for (std::size_t i = 0; i < static_cast<std::size_t>(dlc); ++i) {
             if (data[i] != other.data[i]) return false;
         }
         return true;
