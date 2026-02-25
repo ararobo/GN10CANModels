@@ -8,12 +8,14 @@ namespace devices {
 SolenoidDriverServer::SolenoidDriverServer(CANBus& bus, uint8_t dev_id)
     : CANDevice(bus, id::DeviceType::SolenoidDriver, dev_id) {}
 
-bool SolenoidDriverServer::get_new_target(bool& target) {
-    if (target_.has_value()) {
-        target = target_.value();
-        target_.reset();
+bool SolenoidDriverServer::get_new_target(std::array<bool, 8>& target) {
+    for (int i = 0; i < 8; i++) {
+        if (target_[i].has_value()) {
+            target[i] = target_[i].value();
+            target_[i].reset();
 
-        return true;
+            return true;
+        }
     }
 
     return false;
@@ -27,9 +29,11 @@ void SolenoidDriverServer::on_receive(const CANFrame& frame) {
     }
 
     if (id_fields.is_command(id::MsgTypeSolenoidDriver::Target)) {
-        bool value;
+        std::array<bool, 8> value;
         if (converter::unpack(frame.data.data(), frame.dlc, 0, value)) {
-            target_ = value;
+            for (int i = 0; i < 8; i++) {
+                target_[i] = value[i];
+            }
         }
     }
 }

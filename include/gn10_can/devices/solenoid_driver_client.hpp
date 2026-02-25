@@ -10,6 +10,8 @@
  */
 #pragma once
 
+#include <array>
+
 #include "gn10_can/core/can_device.hpp"
 
 namespace gn10_can {
@@ -30,7 +32,7 @@ class SolenoidDriverClient : public CANDevice {
      *
      * @param target 目標値
      */
-    void set_target(bool target);
+    void set_target(std::array<bool, 8> target);
 
     void on_receive(const CANFrame& frame) override;
 

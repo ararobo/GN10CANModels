@@ -10,6 +10,7 @@
  */
 #pragma once
 
+#include <array>
 #include <optional>
 
 #include "gn10_can/core/can_device.hpp"
@@ -34,7 +35,7 @@ class SolenoidDriverServer : public CANDevice {
      * @return true 新しい目標値があり更新した
      * @return false 新しい目標値はなく,更新しなかった
      */
-    bool get_new_target(bool& target);
+    bool get_new_target(std::array<bool, 8>& target);
 
     /**
      * @brief CANパケット受信時の呼び出し関数の実装
@@ -44,7 +45,7 @@ class SolenoidDriverServer : public CANDevice {
     void on_receive(const CANFrame& frame) override;
 
   private:
-    std::optional<bool> target_;
+    std::optional<bool> target_[8];
 };
 
 }  // namespace devices
