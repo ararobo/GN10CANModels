@@ -53,10 +53,6 @@ bool MotorDriverServer::get_new_gain(GainType type, float& value) {
 void MotorDriverServer::on_receive(const CANFrame& frame) {
     auto id_fields = id::unpack(frame.id);
 
-    if (id_fields.type != device_type_ || id_fields.dev_id != device_id_) {
-        return;
-    }
-
     if (id_fields.is_command(id::MsgTypeMotorDriver::Init)) {
         config_ = MotorConfig::from_bytes(frame.data);
     } else if (id_fields.is_command(id::MsgTypeMotorDriver::Target)) {

@@ -28,10 +28,6 @@ void MotorDriverClient::set_gain(devices::GainType type, float value) {
 void MotorDriverClient::on_receive(const CANFrame& frame) {
     auto id_fields = id::unpack(frame.id);
 
-    if (id_fields.type != device_type_ || id_fields.dev_id != device_id_) {
-        return;
-    }
-
     if (id_fields.is_command(id::MsgTypeMotorDriver::Feedback)) {
         float val;
         uint8_t sw;

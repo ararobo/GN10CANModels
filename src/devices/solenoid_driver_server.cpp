@@ -24,10 +24,6 @@ bool SolenoidDriverServer::get_new_target(std::array<bool, 8>& target) {
 void SolenoidDriverServer::on_receive(const CANFrame& frame) {
     auto id_fields = id::unpack(frame.id);
 
-    if (id_fields.type != device_type_ || id_fields.dev_id != device_id_) {
-        return;
-    }
-
     if (id_fields.is_command(id::MsgTypeSolenoidDriver::Target)) {
         std::array<bool, 8> value;
         if (converter::unpack(frame.data.data(), frame.dlc, 0, value)) {
