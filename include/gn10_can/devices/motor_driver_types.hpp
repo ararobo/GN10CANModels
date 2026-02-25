@@ -185,7 +185,7 @@ class MotorConfig {
          */
         uint8_t limit_switches_config;
         uint8_t user_option;
-        uint8_t reserved[2];
+        uint8_t reserved[2];  // 8byteで揃えたい
     };
 #ifdef _MSC_VER
 #pragma pack(pop)
