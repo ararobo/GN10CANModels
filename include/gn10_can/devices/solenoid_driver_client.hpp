@@ -30,9 +30,16 @@ class SolenoidDriverClient : public CANDevice {
     /**
      * @brief ソレノイドドライバー目標値コマンド送信関数
      *
-     * @param target 目標値
+     * @param target 目標値(8bit)
      */
-    void set_target(std::array<bool, 8> target);
+    void set_target(const uint8_t& target);
+
+    /**
+     * @brief ソレノイドドライバー目標値コマンド送信関数
+     *
+     * @param target 目標値(bool型配列)
+     */
+    void set_target(const std::array<bool, 8>& target);
 
     void on_receive(const CANFrame& frame) override;
 

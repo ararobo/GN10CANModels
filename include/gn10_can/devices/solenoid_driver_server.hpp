@@ -35,7 +35,7 @@ class SolenoidDriverServer : public CANDevice {
      * @return true 新しい目標値があり更新した
      * @return false 新しい目標値はなく,更新しなかった
      */
-    bool get_new_target(std::array<bool, 8>& target);
+    uint8_t get_new_target(uint8_t& target);
 
     /**
      * @brief CANパケット受信時の呼び出し関数の実装
@@ -45,7 +45,7 @@ class SolenoidDriverServer : public CANDevice {
     void on_receive(const CANFrame& frame) override;
 
   private:
-    std::optional<bool> target_[8];
+    std::optional<uint8_t> target_;
 };
 
 }  // namespace devices
