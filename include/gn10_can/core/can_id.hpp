@@ -71,8 +71,9 @@ enum class MsgTypeServoDriver : uint8_t {
  *
  */
 enum class MsgTypeSolenoidDriver : uint8_t {
-    Init   = 0,
-    Target = 1,
+    Init     = 0,
+    Target   = 1,
+    Feedback = 2,
 };
 
 /**

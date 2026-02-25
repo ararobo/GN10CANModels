@@ -8,6 +8,12 @@ namespace devices {
 SolenoidDriverServer::SolenoidDriverServer(CANBus& bus, uint8_t dev_id)
     : CANDevice(bus, id::DeviceType::SolenoidDriver, dev_id) {}
 
+void SolenoidDriverServer::send_feedback(bool feedback_val) {
+    std::array<uint8_t, 1> payload{};
+    converter::pack(payload, 0, feedback_val);
+    send(id::MsgTypeSolenoidDriver::Feedback, payload);
+}
+
 bool SolenoidDriverServer::get_new_target(bool& target) {
     if (target_.has_value()) {
         target = target_.value();

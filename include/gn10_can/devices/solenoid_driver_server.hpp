@@ -28,6 +28,13 @@ class SolenoidDriverServer : public CANDevice {
     SolenoidDriverServer(CANBus& bus, uint8_t dev_id);
 
     /**
+     * @brief ソレノイドドライバーフィードバック送信関数
+     *
+     * @param feedback_val 現在値（bool）
+     */
+    void send_feedback(bool feedback_val);
+
+    /**
      * @brief 新しい目標値があれば更新する
      *
      * @param target ソレノイドの目標値
