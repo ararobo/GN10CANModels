@@ -31,11 +31,20 @@ class SolenoidDriverServer : public CANDevice {
     /**
      * @brief 新しい目標値があれば更新する
      *
-     * @param target ソレノイドの目標値
+     * @param target ソレノイドの目標値(8bit)
      * @return true 新しい目標値があり更新した
      * @return false 新しい目標値はなく,更新しなかった
      */
-    uint8_t get_new_target(uint8_t& target);
+    bool get_new_target(uint8_t& target);
+
+    /**
+     * @brief 新しい目標値があれば更新する
+     *
+     * @param target ソレノイドの目標値(配列)
+     * @return true 新しい目標値があり更新した
+     * @return false 新しい目標値はなく,更新しなかった
+     */
+    bool get_new_target(std::array<bool, 8>& target);
 
     /**
      * @brief CANパケット受信時の呼び出し関数の実装
