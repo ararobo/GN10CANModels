@@ -8,17 +8,24 @@ namespace devices {
 SolenoidDriverServer::SolenoidDriverServer(CANBus& bus, uint8_t dev_id)
     : CANDevice(bus, id::DeviceType::SolenoidDriver, dev_id) {}
 
-uint8_t SolenoidDriverServer::get_new_target(uint8_t& target) {
-    for (int i = 0; i < 8; i++) {
-        if (target_.has_value()) {
-            target = target_.value();
-            target_.reset();
-
-            return true;
-        }
+bool SolenoidDriverServer::get_new_target(uint8_t& target) {
+    if (!target_.has_value()) {
+        return false;
     }
+    target = target_.value();
+    target_.reset();
+    return true;
+}
 
-    return false;
+bool SolenoidDriverServer::get_new_target(std::array<bool, 8>& target) {
+    uint8_t data;
+    if (!get_new_target(data)) {
+        return false;
+    }
+    for (int i = 0; i < 8; i++) {
+        target[i] = (data >> i) & 1;
+    }
+    return true;
 }
 
 void SolenoidDriverServer::on_receive(const CANFrame& frame) {

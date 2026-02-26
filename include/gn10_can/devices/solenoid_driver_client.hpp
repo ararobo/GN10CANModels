@@ -37,7 +37,7 @@ class SolenoidDriverClient : public CANDevice {
     /**
      * @brief ソレノイドドライバー目標値コマンド送信関数
      *
-     * @param target 目標値(bool型配列)
+     * @param target 目標値(配列)
      */
     void set_target(const std::array<bool, 8>& target);
 
