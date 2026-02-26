@@ -35,7 +35,7 @@ class SolenoidDriverServer : public CANDevice {
      * @return true 新しい設定が有り更新した
      * @return false 新しい設定はなく、更新しなかった
      */
-    bool get_new_init(uint8_t init);
+    bool get_new_init(uint8_t& init);
 
     /**
      * @brief 新しい目標値があれば更新する

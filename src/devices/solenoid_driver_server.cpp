@@ -8,7 +8,7 @@ namespace devices {
 SolenoidDriverServer::SolenoidDriverServer(CANBus& bus, uint8_t dev_id)
     : CANDevice(bus, id::DeviceType::SolenoidDriver, dev_id) {}
 
-bool SolenoidDriverServer::get_new_init(uint8_t init) {
+bool SolenoidDriverServer::get_new_init(uint8_t& init) {
     if (init_.has_value()) {
         init = init_.value();
         init_.reset();
