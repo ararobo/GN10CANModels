@@ -8,6 +8,11 @@ namespace devices {
 SolenoidDriverClient::SolenoidDriverClient(CANBus& bus, uint8_t dev_id)
     : CANDevice(bus, id::DeviceType::SolenoidDriver, dev_id) {}
 
+void SolenoidDriverClient::set_init() {
+    std::array<uint8_t, 1> init{0};
+    send(id::MsgTypeSolenoidDriver::Init, init);
+}
+
 void SolenoidDriverClient::set_target(const uint8_t& target) {
     std::array<uint8_t, 1> payload{};
     converter::pack(payload, 0, target);

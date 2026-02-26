@@ -28,6 +28,13 @@ class SolenoidDriverClient : public CANDevice {
     SolenoidDriverClient(CANBus& bus, uint8_t dev_id);
 
     /**
+     * @brief モータードライバー初期化コマンド送信関数
+     *
+     * @param config モータードライバー設定データ
+     */
+    void set_init();
+
+    /**
      * @brief ソレノイドドライバー目標値コマンド送信関数
      *
      * @param target 目標値(8bit)
