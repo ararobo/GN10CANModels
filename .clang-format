@@ -1,43 +1,44 @@
-# .clang-format
-Language: Cpp
-
+# Googleをベースにカスタムする
 BasedOnStyle: Google
-
-# Explicitly set column limit (Google default is 80, but 100 is common for modern screens)
+# 過度な改行はしない
 ColumnLimit: 100
-
-Standard: Latest
-
+# インデントはROS2標準に合わせ横幅節約
 IndentWidth: 4
-TabWidth:    4
-UseTab:      Never
+# クラスのアクセスは明確に
+AccessModifierOffset: -4
 
-PointerAlignment: Left
-# Enforce pointer alignment strictly
-DerivePointerAlignment: false
 
-SortIncludes:  true
-IncludeBlocks: Regroup
+# コンストラクタの初期化リストを次行に配置し、可読性を向上させる
+PackConstructorInitializers: NextLine
+# 文字列を分割しないようにする
+BreakStringLiterals: false
 
-IndentCaseLabels: true
+# 関数とクラスには明確な区切り、処理には繋がりを
+BreakBeforeBraces: Custom
+BraceWrapping:
+    AfterClass:            true
+    AfterFunction:         true
+    AfterNamespace:        false
+    AfterControlStatement: false
+    BeforeCatch:           false
+    BeforeElse:            false
 
-AccessModifierOffset: -2
+# 開き括弧後に改行し、閉じ括弧に揃えてインデント
+AlignAfterOpenBracket: BlockIndent
+# 1行にパラメータを詰め込まず、1行1変数
+BinPackParameters:     false
+BinPackArguments:      false
 
-# Put binary operators (except assignments) at the start of wrapped lines
-# BreakBeforeBinaryOperators: NonAssignment
-
-# Align parameters/operands after an open bracket to keep shifts lined up
-# AlignAfterOpenBracket: Align
-
-BinPackArguments: false
-BinPackParameters: false
-
-AlignConsecutiveMacros: true
-
+# マクロはSTM32向けに縦を揃える
+AlignConsecutiveMacros:
+    Enabled: true
+# ビットフィールドは縦のつながりがあるので揃える
+AlignConsecutiveBitFields: Consecutive
+# 設定値やパラメータの代入は、視認性向上のため縦に揃える
 AlignConsecutiveAssignments: true
-AlignConsecutiveDeclarations: false
 
-FixNamespaceComments: true
+# 配列は右揃えにして値をわかりやすくする
+AlignArrayOfStructures: Right
 
-# Allow simple inline getters (e.g., int get_id() { return id_; }) on one line
-AllowShortFunctionsOnASingleLine: Inline
+# 関数をインライン表記してよいのは空のときだけ
+AllowShortFunctionsOnASingleLine: Empty
