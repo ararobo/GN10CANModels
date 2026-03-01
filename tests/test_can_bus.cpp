@@ -6,22 +6,28 @@
 
 using namespace gn10_can;
 
-class MockDevice : public CANDevice {
-  public:
+class MockDevice : public CANDevice
+{
+public:
     MockDevice(CANBus& bus, id::DeviceType type, uint8_t id) : CANDevice(bus, type, id) {}
 
-    void on_receive(const CANFrame& frame) override { received_frames.push_back(frame); }
+    void on_receive(const CANFrame& frame) override
+    {
+        received_frames.push_back(frame);
+    }
 
     std::vector<CANFrame> received_frames;
 };
 
-class CANBusTest : public ::testing::Test {
-  protected:
+class CANBusTest : public ::testing::Test
+{
+protected:
     MockDriver driver;
     CANBus bus{driver};
 };
 
-TEST_F(CANBusTest, RegisterDeviceAutomatic) {
+TEST_F(CANBusTest, RegisterDeviceAutomatic)
+{
     // RAII registration check
     // Since attach/detach are private and automatic, we can only verify via side effects (like
     // message reception) or by trusting the implementation. However, if we fail to register (e.g.
@@ -42,7 +48,8 @@ TEST_F(CANBusTest, RegisterDeviceAutomatic) {
     ASSERT_EQ(device1.received_frames.size(), 1);
 }
 
-TEST_F(CANBusTest, RegisterMaxDevices) {
+TEST_F(CANBusTest, RegisterMaxDevices)
+{
     std::vector<std::unique_ptr<MockDevice>> devices;
     for (std::size_t i = 0; i < CANBus::MAX_DEVICES; ++i) {
         devices.push_back(std::make_unique<MockDevice>(bus, id::DeviceType::MotorDriver, i));
@@ -60,7 +67,8 @@ TEST_F(CANBusTest, RegisterMaxDevices) {
     EXPECT_EQ(extra_device.received_frames.size(), 0);
 }
 
-TEST_F(CANBusTest, DetachOnDestruction) {
+TEST_F(CANBusTest, DetachOnDestruction)
+{
     {
         MockDevice device(bus, id::DeviceType::MotorDriver, 1);
 
@@ -86,7 +94,8 @@ TEST_F(CANBusTest, DetachOnDestruction) {
     bus.update();  // Should run without accessing deleted object
 }
 
-TEST_F(CANBusTest, SendFrame) {
+TEST_F(CANBusTest, SendFrame)
+{
     CANFrame frame;
     frame.id = 0x456;
 

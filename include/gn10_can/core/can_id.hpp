@@ -112,7 +112,8 @@ struct IdFields {
     uint8_t command;
 
     template <typename CmdEnum>
-    bool is_command(CmdEnum cmd_enum) const {
+    bool is_command(CmdEnum cmd_enum) const
+    {
         return command == static_cast<uint8_t>(cmd_enum);
     }
 };
@@ -127,7 +128,8 @@ struct IdFields {
  * @return uint32_t 生成したCAN-ID
  */
 template <typename CmdEnum>
-uint32_t pack(DeviceType type, uint8_t dev_id, CmdEnum cmd) {
+uint32_t pack(DeviceType type, uint8_t dev_id, CmdEnum cmd)
+{
     static_assert(std::is_enum<CmdEnum>::value, "Command must be an Enum class");
 
     uint32_t id = 0;
@@ -149,7 +151,8 @@ uint32_t pack(DeviceType type, uint8_t dev_id, CmdEnum cmd) {
  * @param std_id CAN-ID
  * @return IdFields 通信パケットの種類が含まれる構造体
  */
-inline IdFields unpack(uint32_t std_id) {
+inline IdFields unpack(uint32_t std_id)
+{
     IdFields result;
 
     uint8_t type_val = (std_id >> 7) & 0x0F;

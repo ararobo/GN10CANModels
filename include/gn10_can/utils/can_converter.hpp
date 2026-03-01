@@ -31,7 +31,8 @@ namespace converter {
  * @return false 失敗（バッファオーバーフローなど）
  */
 template <typename T>
-bool pack(uint8_t* buffer, size_t buffer_len, uint8_t start_byte, T value) {
+bool pack(uint8_t* buffer, size_t buffer_len, uint8_t start_byte, T value)
+{
     static_assert(std::is_trivially_copyable<T>::value, "Type must be POD");
 
     if (start_byte + sizeof(T) > buffer_len) {
@@ -53,7 +54,8 @@ bool pack(uint8_t* buffer, size_t buffer_len, uint8_t start_byte, T value) {
  * @return false 失敗（バッファオーバーフローなど）
  */
 template <typename T>
-bool unpack(const uint8_t* buffer, size_t buffer_len, uint8_t start_byte, T& out_value) {
+bool unpack(const uint8_t* buffer, size_t buffer_len, uint8_t start_byte, T& out_value)
+{
     static_assert(std::is_trivially_copyable<T>::value, "Type must be POD");
 
     if (start_byte + sizeof(T) > buffer_len) {
@@ -75,7 +77,8 @@ bool unpack(const uint8_t* buffer, size_t buffer_len, uint8_t start_byte, T& out
  * @return false 失敗（バッファオーバーフローなど）
  */
 template <typename T, size_t N>
-bool pack(std::array<uint8_t, N>& buffer, uint8_t start_byte, T value) {
+bool pack(std::array<uint8_t, N>& buffer, uint8_t start_byte, T value)
+{
     return pack(buffer.data(), N, start_byte, value);
 }
 
@@ -91,7 +94,8 @@ bool pack(std::array<uint8_t, N>& buffer, uint8_t start_byte, T value) {
  * @return false 失敗（バッファオーバーフローなど）
  */
 template <typename T, size_t N>
-bool unpack(const std::array<uint8_t, N>& buffer, uint8_t start_byte, T& out_value) {
+bool unpack(const std::array<uint8_t, N>& buffer, uint8_t start_byte, T& out_value)
+{
     return unpack(buffer.data(), N, start_byte, out_value);
 }
 

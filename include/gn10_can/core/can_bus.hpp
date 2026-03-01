@@ -25,8 +25,9 @@ class CANDevice;
  * 物理的なCANバスをソフトウェア上で表現したクラス。デバイスの接続(Attach)と、メッセージのルーティング(Dispatch)を担当します。
  *
  */
-class CANBus {
-  public:
+class CANBus
+{
+public:
     static constexpr std::size_t MAX_DEVICES = 16;  // 最大登録デバイス数
 
     /**
@@ -52,7 +53,7 @@ class CANBus {
      */
     bool send_frame(const CANFrame& frame);
 
-  private:
+private:
     friend class CANDevice;
 
     /**

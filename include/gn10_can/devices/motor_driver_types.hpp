@@ -42,8 +42,9 @@ enum class GainType : uint8_t {
 /**
  * @brief モータードライバーの設定データを管理するクラス
  */
-class MotorConfig {
-  public:
+class MotorConfig
+{
+public:
     MotorConfig() = default;
 
     /**
@@ -147,7 +148,7 @@ class MotorConfig {
      */
     static MotorConfig from_bytes(const std::array<uint8_t, 8>& bytes);
 
-  private:
+private:
     static uint8_t map_ratio_to_u8(float ratio);
 
 #ifdef _MSC_VER

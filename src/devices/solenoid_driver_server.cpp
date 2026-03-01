@@ -6,15 +6,19 @@ namespace gn10_can {
 namespace devices {
 
 SolenoidDriverServer::SolenoidDriverServer(CANBus& bus, uint8_t dev_id)
-    : CANDevice(bus, id::DeviceType::SolenoidDriver, dev_id) {}
+    : CANDevice(bus, id::DeviceType::SolenoidDriver, dev_id)
+{
+}
 
-bool SolenoidDriverServer::get_new_init() {
+bool SolenoidDriverServer::get_new_init()
+{
     if (init_.has_value()) {
         return false;
     }
     return true;
 }
-bool SolenoidDriverServer::get_new_target(uint8_t& target) {
+bool SolenoidDriverServer::get_new_target(uint8_t& target)
+{
     if (!target_.has_value()) {
         return false;
     }
@@ -23,7 +27,8 @@ bool SolenoidDriverServer::get_new_target(uint8_t& target) {
     return true;
 }
 
-bool SolenoidDriverServer::get_new_target(std::array<bool, 8>& target) {
+bool SolenoidDriverServer::get_new_target(std::array<bool, 8>& target)
+{
     uint8_t data;
     if (!get_new_target(data)) {
         return false;
@@ -34,7 +39,8 @@ bool SolenoidDriverServer::get_new_target(std::array<bool, 8>& target) {
     return true;
 }
 
-void SolenoidDriverServer::on_receive(const CANFrame& frame) {
+void SolenoidDriverServer::on_receive(const CANFrame& frame)
+{
     auto id_fields = id::unpack(frame.id);
 
     if (id_fields.is_command(id::MsgTypeSolenoidDriver::Init)) {

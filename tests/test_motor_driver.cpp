@@ -8,15 +8,17 @@
 using namespace gn10_can;
 using namespace gn10_can::devices;
 
-class MotorDriverTest : public ::testing::Test {
-  protected:
+class MotorDriverTest : public ::testing::Test
+{
+protected:
     MockDriver driver;
     CANBus bus{driver};
     uint8_t dev_id = 1;
     MotorDriverClient client{bus, dev_id};
     MotorDriverServer server{bus, dev_id};
 
-    void SetUp() override {
+    void SetUp() override
+    {
         // Clear previous frames
         driver.sent_frames.clear();
         while (!driver.receive_queue.empty()) {
@@ -24,7 +26,8 @@ class MotorDriverTest : public ::testing::Test {
         }
     }
 
-    void ProcessBus() {
+    void ProcessBus()
+    {
         // Move sent frames to receive queue to simulate loopback
         // In a real scenario, frames go out to the bus and come back or go to another node.
         // Here we simulate that the bus reflects frames back to all devices (or devices on the same
@@ -49,7 +52,8 @@ class MotorDriverTest : public ::testing::Test {
     }
 };
 
-TEST_F(MotorDriverTest, InitConfig) {
+TEST_F(MotorDriverTest, InitConfig)
+{
     MotorConfig config;
     config.set_max_duty_ratio(0.5f);
     config.set_accel_ratio(0.2f);
@@ -70,7 +74,8 @@ TEST_F(MotorDriverTest, InitConfig) {
     EXPECT_EQ(received_config.get_feedback_cycle(), 10);
 }
 
-TEST_F(MotorDriverTest, Target) {
+TEST_F(MotorDriverTest, Target)
+{
     float target = 0.8f;
     client.set_target(target);
 
@@ -81,7 +86,8 @@ TEST_F(MotorDriverTest, Target) {
     EXPECT_FLOAT_EQ(received_target, target);
 }
 
-TEST_F(MotorDriverTest, Gain) {
+TEST_F(MotorDriverTest, Gain)
+{
     float gain_val = 1.5f;
     client.set_gain(GainType::Kp, gain_val);
 
@@ -96,7 +102,8 @@ TEST_F(MotorDriverTest, Gain) {
     EXPECT_FALSE(server.get_new_gain(GainType::Ki, dummy));
 }
 
-TEST_F(MotorDriverTest, Feedback) {
+TEST_F(MotorDriverTest, Feedback)
+{
     float feedback_val = 12.34f;
     uint8_t limit_sw   = 0x05;  // 0000 0101
 
@@ -110,7 +117,8 @@ TEST_F(MotorDriverTest, Feedback) {
     EXPECT_EQ(client.limit_switches(), limit_sw);
 }
 
-TEST_F(MotorDriverTest, HardwareStatus) {
+TEST_F(MotorDriverTest, HardwareStatus)
+{
     float current = 2.5f;
     int8_t temp   = 45;
 

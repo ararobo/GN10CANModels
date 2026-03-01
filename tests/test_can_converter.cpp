@@ -2,10 +2,10 @@
 
 #include "gn10_can/utils/can_converter.hpp"
 
-
 using namespace gn10_can::converter;
 
-TEST(ConverterTest, PackUnpackInt32) {
+TEST(ConverterTest, PackUnpackInt32)
+{
     uint8_t buffer[8] = {0};
     int32_t value     = -123456789;
 
@@ -17,7 +17,8 @@ TEST(ConverterTest, PackUnpackInt32) {
     EXPECT_EQ(value, unpacked_value);
 }
 
-TEST(ConverterTest, PackUnpackFloat) {
+TEST(ConverterTest, PackUnpackFloat)
+{
     uint8_t buffer[8] = {0};
     float value       = 3.14159f;
 
@@ -29,7 +30,8 @@ TEST(ConverterTest, PackUnpackFloat) {
     EXPECT_FLOAT_EQ(value, unpacked_value);
 }
 
-TEST(ConverterTest, BufferOverflow) {
+TEST(ConverterTest, BufferOverflow)
+{
     uint8_t buffer[4] = {0};
     int32_t value     = 100;
 
@@ -37,7 +39,8 @@ TEST(ConverterTest, BufferOverflow) {
     EXPECT_FALSE(pack(buffer, 4, 1, value));
 }
 
-TEST(ConverterTest, ArrayPack) {
+TEST(ConverterTest, ArrayPack)
+{
     std::array<uint8_t, 8> buffer{};
     uint16_t value = 0xABCD;
 

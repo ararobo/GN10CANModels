@@ -18,15 +18,16 @@
 namespace gn10_can {
 namespace drivers {
 
-class DriverSTM32CAN : public ICanDriver {
-  public:
+class DriverSTM32CAN : public ICanDriver
+{
+public:
     DriverSTM32CAN(CAN_HandleTypeDef* hcan) : hcan_(hcan) {}
 
     bool init();
     bool send(const CANFrame& frame) override;
     bool receive(CANFrame& out_frame) override;
 
-  private:
+private:
     CAN_HandleTypeDef* hcan_;
 };
 }  // namespace drivers

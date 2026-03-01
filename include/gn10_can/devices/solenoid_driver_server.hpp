@@ -18,8 +18,9 @@
 namespace gn10_can {
 namespace devices {
 
-class SolenoidDriverServer : public CANDevice {
-  public:
+class SolenoidDriverServer : public CANDevice
+{
+public:
     /**
      * @brief ソレノイド用サーバークラスのコンストラクタ
      *
@@ -62,7 +63,7 @@ class SolenoidDriverServer : public CANDevice {
      */
     void on_receive(const CANFrame& frame) override;
 
-  private:
+private:
     std::optional<uint8_t> init_;
     std::optional<uint8_t> target_;
 };

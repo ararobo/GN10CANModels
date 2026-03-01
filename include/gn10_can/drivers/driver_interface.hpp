@@ -19,8 +19,9 @@ namespace drivers {
  * @brief CAN通信ハードウェアインターフェースの抽象化クラス
  *
  */
-class ICanDriver {
-  public:
+class ICanDriver
+{
+public:
     virtual ~ICanDriver() = default;
 
     /**

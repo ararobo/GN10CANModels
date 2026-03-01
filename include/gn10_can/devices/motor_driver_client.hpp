@@ -22,8 +22,9 @@ namespace devices {
  * @brief モータードライバー用デバイスクラス
  *
  */
-class MotorDriverClient : public CANDevice {
-  public:
+class MotorDriverClient : public CANDevice
+{
+public:
     /**
      * @brief モータードライバー用デバイスクラスのコンストラクタ
      *
@@ -88,7 +89,7 @@ class MotorDriverClient : public CANDevice {
      */
     int8_t temperature() const;
 
-  private:
+private:
     float feedback_value_{0.0f};
     uint8_t limit_switches_{0};
     float load_current_{0.0f};

@@ -17,8 +17,9 @@
 namespace gn10_can {
 namespace devices {
 
-class SolenoidDriverClient : public CANDevice {
-  public:
+class SolenoidDriverClient : public CANDevice
+{
+public:
     /**
      * @brief ソレノイド用クライアントクラスのコンストラクタ
      *
@@ -50,7 +51,7 @@ class SolenoidDriverClient : public CANDevice {
 
     void on_receive(const CANFrame& frame) override;
 
-  private:
+private:
 };
 
 }  // namespace devices

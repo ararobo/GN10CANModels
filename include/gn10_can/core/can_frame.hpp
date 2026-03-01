@@ -49,11 +49,14 @@ struct CANFrame {
      * @return CANFrame 生成したCANフレーム
      */
     template <typename CmdEnum>
-    static CANFrame make(id::DeviceType type,
-                         uint8_t dev_id,
-                         CmdEnum cmd,
-                         const uint8_t* payload = nullptr,
-                         std::size_t length     = 0) {
+    static CANFrame make(
+        id::DeviceType type,
+        uint8_t dev_id,
+        CmdEnum cmd,
+        const uint8_t* payload = nullptr,
+        std::size_t length     = 0
+    )
+    {
         CANFrame frame;
         frame.id = id::pack(type, dev_id, cmd);
         frame.set_data(payload, length);
@@ -71,10 +74,10 @@ struct CANFrame {
      * @return CANFrame 生成したCANフレーム
      */
     template <typename CmdEnum>
-    static CANFrame make(id::DeviceType type,
-                         uint8_t dev_id,
-                         CmdEnum cmd,
-                         std::initializer_list<uint8_t> payload) {
+    static CANFrame make(
+        id::DeviceType type, uint8_t dev_id, CmdEnum cmd, std::initializer_list<uint8_t> payload
+    )
+    {
         return make(type, dev_id, cmd, payload.begin(), payload.size());
     }
 
@@ -84,7 +87,8 @@ struct CANFrame {
      * @param payload 入れるデータ
      * @param length データの長さ[byte]
      */
-    void set_data(const uint8_t* payload, std::size_t length) {
+    void set_data(const uint8_t* payload, std::size_t length)
+    {
         // データサイズをMAX_DLC以下に制限
         std::size_t size;
         if (length < MAX_DLC) {
@@ -112,7 +116,8 @@ struct CANFrame {
      *
      * @return uint32_t ルーティングID (DeviceType + DeviceID)
      */
-    uint32_t get_routing_id() const {
+    uint32_t get_routing_id() const
+    {
         // Commandビット幅分右シフトして切り捨てる
         return id >> id::BIT_WIDTH_COMMAND;
     }
@@ -124,7 +129,8 @@ struct CANFrame {
      * @return true 等しい
      * @return false 等しくない
      */
-    bool operator==(const CANFrame& other) const noexcept {
+    bool operator==(const CANFrame& other) const noexcept
+    {
         if (id != other.id || dlc != other.dlc || is_extended != other.is_extended ||
             is_rtr != other.is_rtr || is_error != other.is_error) {
             return false;
@@ -143,7 +149,10 @@ struct CANFrame {
      * @return true 等しくない
      * @return false 等しい
      */
-    bool operator!=(const CANFrame& other) const noexcept { return !(*this == other); }
+    bool operator!=(const CANFrame& other) const noexcept
+    {
+        return !(*this == other);
+    }
 };
 
 }  // namespace gn10_can

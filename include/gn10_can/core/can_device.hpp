@@ -24,8 +24,9 @@ namespace gn10_can {
  * @note 各デバイス毎に具体化クラスを継承して定義してください。
  *
  */
-class CANDevice {
-  public:
+class CANDevice
+{
+public:
     /**
      * @brief デバイス抽象化クラスのコンストラクタ
      *
@@ -36,11 +37,15 @@ class CANDevice {
      * デバイスのID（同じデバイスの種類のデバイスが複数あることを配慮して、0,1,2,..）
      */
     CANDevice(CANBus& bus, id::DeviceType device_type, uint8_t device_id)
-        : bus_(bus), device_type_(device_type), device_id_(device_id) {
+        : bus_(bus), device_type_(device_type), device_id_(device_id)
+    {
         bus_.attach(this);
     }
 
-    virtual ~CANDevice() { bus_.detach(this); }
+    virtual ~CANDevice()
+    {
+        bus_.detach(this);
+    }
 
     // コピーとムーブを禁止 (RAIIによるデバイス登録の一意性を保つため)
     CANDevice(const CANDevice&)            = delete;
@@ -62,13 +67,14 @@ class CANDevice {
      *
      * @return uint32_t Routing ID (Type + DeviceID)
      */
-    uint32_t get_routing_id() const {
+    uint32_t get_routing_id() const
+    {
         // CANFrame::get_routing_id() と同じ形式 (Type << BIT_WIDTH_DEV_ID) | DeviceID を返す
         return (static_cast<uint32_t>(device_type_) << id::BIT_WIDTH_DEV_ID) |
                static_cast<uint32_t>(device_id_);
     }
 
-  protected:
+protected:
     /**
      * @brief コマンド・データ・データ長からCANフレームを作成しCANManagerを使用して送信
      *
@@ -81,7 +87,8 @@ class CANDevice {
      * @return false 送信失敗（CANDriverの継承後クラスによって定義）
      */
     template <typename CmdEnum>
-    bool send(CmdEnum command, const uint8_t* data = nullptr, std::size_t len = 0) {
+    bool send(CmdEnum command, const uint8_t* data = nullptr, std::size_t len = 0)
+    {
         auto frame = CANFrame::make(device_type_, device_id_, command, data, len);
         return bus_.send_frame(frame);
     }
@@ -98,7 +105,8 @@ class CANDevice {
      * @return false 送信失敗（CANDriverの継承後クラスによって定義）
      */
     template <typename CmdEnum, std::size_t N>
-    bool send(CmdEnum command, const std::array<uint8_t, N>& data) {
+    bool send(CmdEnum command, const std::array<uint8_t, N>& data)
+    {
         return send(command, data.data(), static_cast<uint8_t>(data.size()));
     }
 

@@ -22,8 +22,9 @@ namespace devices {
  * @brief モータードライバー用デバイスクラス
  *
  */
-class MotorDriverServer : public CANDevice {
-  public:
+class MotorDriverServer : public CANDevice
+{
+public:
     /**
      * @brief モータードライバー用デバイスクラスのコンストラクタ
      *
@@ -83,7 +84,7 @@ class MotorDriverServer : public CANDevice {
      */
     void on_receive(const CANFrame& frame) override;
 
-  private:
+private:
     static constexpr std::size_t kGainTypeCount = static_cast<std::size_t>(GainType::Count);
 
     std::optional<MotorConfig> config_;

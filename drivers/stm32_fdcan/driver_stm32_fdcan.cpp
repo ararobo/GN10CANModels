@@ -3,7 +3,8 @@
 namespace gn10_can {
 namespace drivers {
 
-bool DriverSTM32FDCAN::init() {
+bool DriverSTM32FDCAN::init()
+{
     FDCAN_FilterTypeDef filter;
     filter.IdType       = FDCAN_STANDARD_ID;
     filter.FilterIndex  = 0;
@@ -24,9 +25,14 @@ bool DriverSTM32FDCAN::init() {
     return true;
 }
 
-bool DriverSTM32FDCAN::send(const CANFrame& frame) {
+bool DriverSTM32FDCAN::send(const CANFrame& frame)
+{
     FDCAN_TxHeaderTypeDef tx_header;
-    tx_header.IdType              = (frame.is_extended) ? FDCAN_EXTENDED_ID : FDCAN_STANDARD_ID;
+    if (frame.is_extended) {
+        tx_header.IdType = FDCAN_EXTENDED_ID;
+    } else {
+        tx_header.IdType = FDCAN_STANDARD_ID;
+    }
     tx_header.Identifier          = frame.id;
     tx_header.TxFrameType         = FDCAN_DATA_FRAME;
     tx_header.DataLength          = frame.dlc;
@@ -37,13 +43,15 @@ bool DriverSTM32FDCAN::send(const CANFrame& frame) {
     tx_header.MessageMarker       = 0;
 
     if (HAL_FDCAN_AddMessageToTxFifoQ(
-            hfdcan_, &tx_header, const_cast<uint8_t*>(frame.data.data())) != HAL_OK) {
+            hfdcan_, &tx_header, const_cast<uint8_t*>(frame.data.data())
+        ) != HAL_OK) {
         return false;
     }
     return true;
 }
 
-bool DriverSTM32FDCAN::receive(CANFrame& out_frame) {
+bool DriverSTM32FDCAN::receive(CANFrame& out_frame)
+{
     FDCAN_RxHeaderTypeDef rx_header;
     uint8_t rx_data[8];
 
