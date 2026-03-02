@@ -408,7 +408,7 @@ src/devices/
 └── my_new_device_server.cpp   ← 追加
 ```
 
-### 2.5 テストの追加
+### 2.4 テストの追加
 
 新しいデバイスを追加したら、必ず `tests/test_my_new_device.cpp` を作成してください。
 テストの書き方は [testing.md](testing.md) を参照してください。
