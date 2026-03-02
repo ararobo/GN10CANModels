@@ -16,6 +16,28 @@ This library is designed to work across multiple platforms:
 - **STM32** - CMake
 - **ROS 2** - CMake/Linux
 
+## Overview
+
+This library is focused on **CAN frame definitions and ID management** and does not include communication implementation (send/receive handling).
+Understanding the relationship between three key classes lets you get started without confusion.
+
+| Class | Role |
+| :--- | :--- |
+| `ICanDriver` | Hardware-specific send/receive. Implement one per MCU |
+| `CANBus` | Receives frames via the driver and dispatches them to each device |
+| `CANDevice` | Protocol handling per device (motor, solenoid, etc.). Auto-registered to `CANBus` |
+
+```mermaid
+flowchart LR
+    HW[Hardware\nSTM32 / ESP32] <-->|"send / receive"| D[ICanDriver\nImplement yourself]
+    D <--> B[CANBus\nAuto routing]
+    B <-->|"on_receive / send"| M[MotorDriverClient\nID: 0]
+    B <-->|"on_receive / send"| S[SolenoidDriverClient\nID: 1]
+    B <-->|"on_receive / send"| N[...]
+```
+
+> One instance = one `dev_id`. If you have 4 motors, create 4 `MotorDriverClient` instances.
+
 ## Development Environment Setup
 
 ### Common
@@ -34,27 +56,6 @@ Install STM32CubeCLT.
 ### Windows(Generic)
 
 Install a C++ Compiler(Visual Studio or MinGW), CMake, and Ninja, and add them to your PATH.
-
-## Integration
-
-### CMake (`FetchContent` or Submodule)
-Add the following to your `CMakeLists.txt`:
-```cmake
-# Example: If placed under 'libs' folder
-add_subdirectory(libs/gn10-can)
-target_link_libraries(<your_target_name> PRIVATE gn10_can)
-```
-
-## Documentation
-
-| Document | Description |
-| :--- | :--- |
-| [Getting Started](docs/getting-started.md) | Build instructions, minimal example, Client vs Server usage |
-| [Architecture](docs/architecture.md) | Design rationale, RAII lifetime rules, Client/Server pattern, CAN ID layout |
-| [Porting Guide](docs/porting-guide.md) | Adding a new MCU driver or new device class |
-| [Testing Guide](docs/testing.md) | Running tests, using MockDriver to inject frames |
-| [Class Reference](docs/gn10-can-class.md) | Class overview and UML diagram |
-| [Coding Rules](docs/coding-rules.md) | Naming conventions, constraints, and comment style |
 
 ## Build
 
@@ -124,9 +125,14 @@ gn10_can::CANBus bus(driver);
 gn10_can::devices::MotorDriverClient motor(bus, 0);       // Motor Driver (ID: 0)
 gn10_can::devices::SolenoidDriverClient solenoid(bus, 1); // Solenoid Driver (ID: 1)
 
-// Send commands
-motor.set_target(100.0f); // Set target velocity/position to Motor
-solenoid.set_target(true); // Turn on Solenoid
+// 3. Send init commands
+// ⚠️ Motor will NOT move until set_init() is sent
+gn10_can::devices::MotorConfig motor_config;
+motor_config.set_max_duty_ratio(1.0f);
+motor_config.set_encoder_type(gn10_can::devices::EncoderType::None);
+motor.set_init(motor_config);
+
+solenoid.set_init();  // No arguments required
 
 // Main loop
 while (true) {
@@ -135,9 +141,30 @@ while (true) {
     //  interrupt or in the driver's receive callback function for lower latency.)
     bus.update();
 
+    // Send commands
+    motor.set_target(1.0f);  // Set target velocity/position (-1.0f ~ 1.0f)
+
+    // Solenoid target: uint8_t where each bit controls one solenoid
+    solenoid.set_target(static_cast<uint8_t>(0b00000001));  // Turn on solenoid 0
+
+    // Or use std::array<bool, 8>:
+    // std::array<bool, 8> states{true, false, false, false, false, false, false, false};
+    // solenoid.set_target(states);
+
     // ... your application logic ...
 }
 ```
+
+## Documentation
+
+| Document | Description |
+| :--- | :--- |
+| [Getting Started](docs/getting-started.md) | Build instructions, minimal example, Client vs Server usage |
+| [Architecture](docs/architecture.md) | Design rationale, RAII lifetime rules, Client/Server pattern, CAN ID layout |
+| [Porting Guide](docs/porting-guide.md) | Adding a new MCU driver or new device class |
+| [Testing Guide](docs/testing.md) | Running tests, using MockDriver to inject frames |
+| [Class Reference](docs/gn10-can-class.md) | Class overview and UML diagram |
+| [Coding Rules](docs/coding-rules.md) | Naming conventions, constraints, and comment style |
 
 ## Project Structure
 ```text
@@ -160,26 +187,19 @@ Class diagram (simplified)
 
 [Class diagram detail](uml/class_diagram.png)
 
+## Integration
+
+### CMake (`FetchContent` or Submodule)
+Add the following to your `CMakeLists.txt`:
+```cmake
+# Example: If placed under 'libs' folder
+add_subdirectory(libs/gn10-can)
+target_link_libraries(<your_target_name> PRIVATE gn10_can)
+```
+
 ## Development Rules
 
-### 1. Naming Conventions
-Variable and function names must be self-explanatory. We follow the **Google C++ Style Guide** basics:
-- **Class/Struct names**: `PascalCase` (e.g., `SpeedMsg`, `BatteryStatus`)
-- **Function/Variable names**: `snake_case` (e.g., `get_id()`, `target_velocity`)
-- **Constants/Enum values**: `ALL_CAPS` (e.g., `BATTERY_LOW`)
-- **Private Member variables**: Must have a trailing underscore (e.g., speed_, voltage_) to distinguish them from local variables.
-
-### 2. Code Formatting
-- A `.clang-format` file is provided in the root directory. Please configure your editor to use it on save.
-
-### 3. Standard Library Only
-To ensure cross-platform compatibility:
-- Files under `include/gn10_can/` must **NOT** include platform-specific headers such as `<Arduino.h>`, `<rclcpp/rclcpp.h>`, or `<hal_driver.h>`.
-- Only standard C++ headers are allowed: `<cstdint>`, `<cstring>`, `<cmath>`, `<algorithm>`, etc.
-
-### 4. Memory Management (No Dynamic Allocation)
-- To ensure stability on embedded systems (STM32/ESP32), avoid using dynamic memory allocation (`new`, `malloc`, `std::vector`, `std::string`) inside the models.
-- Use fixed-size arrays and primitive types.
+[Coding Rules](docs/coding-rules.md)
 
 ## License
 This project is licensed under the Apache-2.0 - see the [LICENSE](LICENSE) file for details.

@@ -14,6 +14,28 @@ CANバスのデータモデル、ID定義、およびハンドリングクラス
 - **STM32** - CMake
 - **ROS 2** - CMake/Linux
 
+## 概要
+
+このライブラリは **「データフレーム定義・ID管理」** に特化しており、通信の実装（送受信処理）は含みません。
+3つの主要クラスの関係を理解することで、迷わず使い始められます。
+
+| クラス | 役割 |
+| :--- | :--- |
+| `ICanDriver` | ハードウェア依存の送受信処理。マイコンごとに自前で実装する |
+| `CANBus` | ドライバーを使って受信したフレームを各デバイスに配送する |
+| `CANDevice` | 各デバイス（モーター・ソレノイド等）のプロトコル処理。`CANBus` に自動登録される |
+
+```mermaid
+flowchart LR
+    HW[ハードウェア\nSTM32 / ESP32] <-->|"send / receive"| D[ICanDriver\n自前で実装]
+    D <--> B[CANBus\n自動ルーティング]
+    B <-->|"on_receive / send"| M[MotorDriverClient\nID: 0]
+    B <-->|"on_receive / send"| S[SolenoidDriverClient\nID: 1]
+    B <-->|"on_receive / send"| N[...]
+```
+
+> デバイスは1インスタンス = 1 `dev_id` です。モーターが4つあれば `MotorDriverClient` を4つ作成します。
+
 ## 開発環境構築
 
 ### 共通
@@ -98,9 +120,14 @@ gn10_can::CANBus bus(driver);
 gn10_can::devices::MotorDriverClient motor(bus, 0);       // モータードライバー (ID: 0)
 gn10_can::devices::SolenoidDriverClient solenoid(bus, 1); // ソレノイドドライバー (ID: 1)
 
-// コマンドの送信
-motor.set_target(100.0f); // モーターの目標速度/位置を設定
-solenoid.set_target(true); // ソレノイドをONに設定
+// 3. 初期化コマンドの送信
+// ⚠️ set_init() を送信するまでモーターは動きません
+gn10_can::devices::MotorConfig motor_config;
+motor_config.set_max_duty_ratio(1.0f);
+motor_config.set_encoder_type(gn10_can::devices::EncoderType::None);
+motor.set_init(motor_config);
+
+solenoid.set_init();  // ソレノイドは引数なし
 
 // メインループ
 while (true) {
@@ -108,6 +135,16 @@ while (true) {
     // (注: 低遅延のために、CAN受信割り込みやドライバーの受信コールバック関数内で
     //  bus.update() を直接呼び出すことも可能です)
     bus.update();
+
+    // コマンドの送信
+    motor.set_target(1.0f);  // 目標速度/位置を設定 (-1.0f ~ 1.0f)
+
+    // ソレノイドは uint8_t (各ビットが各ソレノイドのON/OFF) で指定
+    solenoid.set_target(static_cast<uint8_t>(0b00000001));  // ソレノイド0をON
+
+    // または std::array<bool, 8> で指定
+    // std::array<bool, 8> states{true, false, false, false, false, false, false, false};
+    // solenoid.set_target(states);
 
     // ... アプリケーションロジック ...
 }
@@ -153,26 +190,9 @@ add_subdirectory(libs/gn10-can)
 target_link_libraries(${PROJECT_NAME} PRIVATE gn10_can)
 ```
 
-## 開発ルール
+## コーディング規約
 
-### 1. 命名規則
-変数名と関数名は説明的である必要があります。基本的には **Google C++ Style Guide** に従います：
-- **クラス/構造体名**: `PascalCase` (例: `SpeedMsg`, `BatteryStatus`)
-- **関数/変数名**: `snake_case` (例: `get_id()`, `target_velocity`)
-- **定数/列挙値**: `ALL_CAPS` (例: `BATTERY_LOW`)
-- **プライベートメンバ変数**: ローカル変数と区別するために、末尾にアンダースコアを付ける必要があります (例: `speed_`, `voltage_`)。
-
-### 2. コードフォーマット
-- ルートディレクトリに `.clang-format` ファイルが用意されています。保存時にこれを使用するようにエディタを設定してください。
-
-### 3. 標準ライブラリのみ使用
-クロスプラットフォームの互換性を確保するため：
-- `include/gn10_can/` 以下のファイルは、`<Arduino.h>`、`<rclcpp/rclcpp.h>`、`<hal_driver.h>` などのプラットフォーム固有のヘッダーを含んでは**いけません**。
-- 標準C++ヘッダーのみが許可されます：`<cstdint>`, `<cstring>`, `<cmath>`, `<algorithm>` など。
-
-### 4. メモリ管理（動的割り当てなし）
-- 組み込みシステム（STM32/ESP32）での安定性を確保するため、モデル内での動的メモリ割り当て（`new`, `malloc`, `std::vector`, `std::string`）の使用は避けてください。
-- 固定サイズの配列とプリミティブ型を使用してください。
+[コーディング規約](docs/coding-rules.md)
 
 ## ライセンス
 このプロジェクトはApache-2.0の下でライセンスされています - 詳細は [LICENSE](LICENSE) ファイルを参照してください。
