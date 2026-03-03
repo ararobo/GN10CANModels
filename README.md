@@ -27,14 +27,7 @@ Understanding the relationship between three key classes lets you get started wi
 | `CANBus` | Receives frames via the driver and dispatches them to each device |
 | `CANDevice` | Protocol handling per device (motor, solenoid, etc.). Auto-registered to `CANBus` |
 
-```mermaid
-flowchart LR
-    HW[Hardware\nSTM32 / ESP32] <-->|"send / receive"| D[ICanDriver\nImplement yourself]
-    D <--> B[CANBus\nAuto routing]
-    B <-->|"on_receive / send"| M[MotorDriverClient\nID: 0]
-    B <-->|"on_receive / send"| S[SolenoidDriverClient\nID: 1]
-    B <-->|"on_receive / send"| N[...]
-```
+![Overview](uml/overview.png)
 
 > One instance = one `dev_id`. If you have 4 motors, create 4 `MotorDriverClient` instances.
 

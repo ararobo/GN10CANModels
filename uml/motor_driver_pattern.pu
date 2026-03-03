@@ -1,0 +1,26 @@
+@startuml motor_driver_pattern
+!theme plain
+skinparam backgroundColor #ffffff
+skinparam classBackgroundColor #f0f0f0
+skinparam classBorderColor #333333
+
+class MotorDriverClient {
+  +set_target(float)
+  +set_gain(GainType, float)
+  +set_init(MotorConfig)
+  +feedback_value() float
+  +load_current() float
+  +temperature() int8_t
+}
+
+class MotorDriverServer {
+  +get_new_target(float&) bool
+  +get_new_gain(GainType, float&) bool
+  +get_new_init(MotorConfig&) bool
+  +send_feedback(float, uint8_t)
+  +send_hardware_status(float, int8_t)
+}
+
+MotorDriverClient ..> MotorDriverServer : CAN bus
+
+@enduml

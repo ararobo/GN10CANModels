@@ -22,16 +22,7 @@
 サーボドライバーとマスタ（PC や別マイコン）は CAN バスで接続されます。
 マスタ側が **Client**、サーボドライバー側のマイコンが **Server** を実行します。
 
-```mermaid
-sequenceDiagram
-    participant M as Master (Client)
-    participant S as Servo MCU (Server)
-
-    M->>S: set_init(frequency_hz)   [MsgTypeServoDriver::Init]
-    M->>S: set_duty_cycle(duty)     [MsgTypeServoDriver::Target]
-    S->>S: get_new_init()           [frequency_hz を取得して PWM 初期化]
-    S->>S: get_new_duty_cycle()     [duty_cycle を取得して PWM 出力]
-```
+![Servo Overview](../uml/servo_overview.png)
 
 ### MotorDriver との主な違い
 
@@ -367,17 +358,7 @@ void app_main()
 
 ### クラス図
 
-```mermaid
-classDiagram
-    class CANDevice {
-        <<abstract>>
-        +on_receive(CANFrame) *
-        #send(CmdEnum, array)
-    }
-
-    class ServoDriverClient {
-        +set_init(frequency_hz: float)
-        +set_duty_cycle(duty_cycle: uint16_t)
+![Servo Classes](../uml/servo_classes.png)
         +on_receive(CANFrame)
     }
 

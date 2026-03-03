@@ -1,0 +1,18 @@
+@startuml can_id_design
+!theme plain
+skinparam backgroundColor #ffffff
+
+class CANIDField {
+  Bits 0-2 (3bit)
+  Command: Message type
+  (Init/Target/Feedback...)
+  ---
+  Bits 3-6 (4bit)
+  DeviceID: Device number 0-15
+  ---
+  Bits 7-10 (4bit)
+  DeviceType: Device type 0-15
+  (MotorDriver, Solenoid...)
+}
+
+@enduml

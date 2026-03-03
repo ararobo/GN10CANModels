@@ -18,17 +18,7 @@
 
 ## 1. 全体構造
 
-```mermaid
-flowchart TD
-    A["Application\nROS2ノード / STM32メインループ"]
-    B["Devices 層\nMotorDriverClient / MotorDriverServer\nSolenoidDriverClient / SolenoidDriverServer"]
-    C["Core 層\nCANBus · CANDevice · CANFrame\nid namespace"]
-    D["Drivers 層\nICanDriver · DriverSTM32CAN · DriverSTM32FDCAN"]
-
-    A -->|使用| B
-    B -->|継承| C
-    C -->|依存| D
-```
+![Architecture Layers](../uml/architecture_layers.png)
 
 依存の方向は **上から下のみ** です。Drivers 層は Core に依存しません（`CANFrame` のみ参照）。
 
@@ -96,25 +86,7 @@ gn10_can::devices::MotorDriverClient motor{bus, 1};  // 未定義動作
 
 1つのデバイスに対して、役割の異なる2つのクラスが対称的に存在します。
 
-```mermaid
-classDiagram
-    class MotorDriverClient {
-        +set_target(float)
-        +set_gain(GainType, float)
-        +set_init(MotorConfig)
-        +feedback_value() float
-        +load_current() float
-        +temperature() int8_t
-    }
-    class MotorDriverServer {
-        +get_new_target(float&) bool
-        +get_new_gain(GainType, float&) bool
-        +get_new_init(MotorConfig&) bool
-        +send_feedback(float, uint8_t)
-        +send_hardware_status(float, int8_t)
-    }
-    MotorDriverClient ..> MotorDriverServer : CAN bus
-```
+![Motor Driver Pattern](../uml/motor_driver_pattern.png)
 
 **Server 側の `get_new_*()` は `std::optional` ベースの設計です。**
 新しい値が届いていないときは `false` を返します。
@@ -134,12 +106,7 @@ if (server.get_new_target(target)) {
 
 ### ビット割り当て (Standard ID: 11bit)
 
-```mermaid
-packet-beta
-  0-2: "Command (3bit)"
-  3-6: "DeviceID (4bit)"
-  7-10: "DeviceType (4bit)"
-```
+![CAN ID Design](../uml/can_id_design.png)
 
 | フィールド | ビット幅 | 範囲 | 用途 |
 | :--- | :--- | :--- | :--- |
@@ -152,12 +119,7 @@ packet-beta
 `CANBus::dispatch()` は `get_routing_id()` (DeviceType + DeviceID の上位8bit) で
 `on_receive()` を呼ぶデバイスを絞り込みます。
 Command ビットを含めた完全なフィルタリングは各デバイスの `on_receive()` 内で行います。
-
----
-
-## 6. 設計上の制約と理由
-
-| 制約 | 理由 |
+![CAN ID Design](../uml/can_id_design.png)約 | 理由 |
 | :--- | :--- |
 | 動的メモリ不使用 | 組み込みシステムでのヒープ断片化・非決定的遅延を回避 |
 | `CANDevice` のコピー/ムーブ禁止 | バスへのポインタ管理の一意性を保証するため |

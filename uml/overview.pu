@@ -1,0 +1,20 @@
+@startuml overview
+!theme plain
+skinparam backgroundColor #ffffff
+skinparam classBackgroundColor #f0f0f0
+skinparam classBorderColor #333333
+
+object "Hardware\nSTM32 / ESP32" as HW
+object "ICanDriver\nImplement yourself" as D
+object "CANBus\nAuto routing" as B
+object "MotorDriverClient\nID: 0" as M
+object "SolenoidDriverClient\nID: 1" as S
+object "..." as N
+
+HW <--> D : send / receive
+D <--> B
+B <--> M : on_receive / send
+B <--> S : on_receive / send
+B <--> N : on_receive / send
+
+@enduml

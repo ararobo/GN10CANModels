@@ -25,14 +25,7 @@ CANバスのデータモデル、ID定義、およびハンドリングクラス
 | `CANBus` | ドライバーを使って受信したフレームを各デバイスに配送する |
 | `CANDevice` | 各デバイス（モーター・ソレノイド等）のプロトコル処理。`CANBus` に自動登録される |
 
-```mermaid
-flowchart LR
-    HW[ハードウェア\nSTM32 / ESP32] <-->|"send / receive"| D[ICanDriver\n自前で実装]
-    D <--> B[CANBus\n自動ルーティング]
-    B <-->|"on_receive / send"| M[MotorDriverClient\nID: 0]
-    B <-->|"on_receive / send"| S[SolenoidDriverClient\nID: 1]
-    B <-->|"on_receive / send"| N[...]
-```
+![Overview](uml/overview_ja.png)
 
 > デバイスは1インスタンス = 1 `dev_id` です。モーターが4つあれば `MotorDriverClient` を4つ作成します。
 

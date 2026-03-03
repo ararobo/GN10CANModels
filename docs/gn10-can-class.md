@@ -70,34 +70,5 @@
 
 ## クラス図 (UML概略)
 
-```mermaid
-classDiagram
-    class CANBus {
-        -devices_
-        -driver_
-        +update()
-        +send_frame(CANFrame)
-        -attach(CANDevice*)
-        -detach(CANDevice*)
-    }
-    class CANDevice {
-        <<Abstract>>
-        #send(...)
-        +on_receive(CANFrame)*
-    }
-    class ICanDriver {
-        <<Interface>>
-        +send(CANFrame)*
-        +receive(CANFrame)*
-    }
-    class MotorDriver {
-        +send_target(float)
-        +send_gain(...)
-    }
-
-    CANBus "1" o-- "1" ICanDriver
-    CANBus "1" o-- "*" CANDevice : Manages (RAII)
-    ICanDriver <|-- DriverSTM32CAN
-    CANDevice <|-- MotorDriver
-    CANDevice ..> CANBus : Attaches to
-```
+![Classes](../uml/classes.png)
+| **MotorDriver** | CA

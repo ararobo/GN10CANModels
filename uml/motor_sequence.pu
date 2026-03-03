@@ -1,0 +1,23 @@
+@startuml motor_sequence
+!theme plain
+skinparam backgroundColor #ffffff
+skinparam backgroundColor #ffffff
+
+participant "Upper MCU / PC\nMotorDriverClient" as C
+participant "Motor Driver\nMotorDriverServer" as S
+
+C -> S : set_target(float)
+C -> S : set_gain(type, value)
+C -> S : set_init(config)
+note over S : Process incoming\ncommands
+
+S --> C : send_feedback(float, uint8_t)
+S --> C : send_hardware_status(float, int8_t)
+note over C : Receive feedback\nand status
+
+note over C, S
+  Both use the same dev_id
+  Frames are automatically routed by CAN ID match
+end note
+
+@enduml

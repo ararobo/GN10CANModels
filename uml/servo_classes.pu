@@ -1,0 +1,38 @@
+@startuml servo_classes
+!theme plain
+skinparam backgroundColor #ffffff
+skinparam classBackgroundColor #f0f0f0
+skinparam classBorderColor #333333
+
+class CANDevice {
+  {abstract}
+  +on_receive(CANFrame)*
+  #send(CmdEnum, array)
+}
+
+class ServoDriverClient {
+  +set_init(frequency_hz: float)
+  +set_duty_cycle(duty_cycle: uint16_t)
+  +on_receive(CANFrame)
+}
+
+class ServoDriverServer {
+  +get_new_init(frequency_hz) bool
+  +get_new_duty_cycle(duty_cycle) bool
+  +on_receive(CANFrame)
+  -init_frequency_hz_: optional<float>
+  -target_duty_cycle_: optional<uint16_t>
+}
+
+class MotorDriverClient {
+  +set_init(rpm_max: float)
+  +set_target(velocity: float)
+  +feedback_value() float
+  +on_receive(CANFrame)
+}
+
+ServoDriverClient --|> CANDevice
+ServoDriverServer --|> CANDevice
+MotorDriverClient --|> CANDevice
+
+@enduml

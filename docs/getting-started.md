@@ -160,17 +160,7 @@ void loop()
 | `MotorDriverClient` | **指令を送り、フィードバックを受け取る** | ROS2ノード / 上位マイコン |
 | `MotorDriverServer` | **指令を受け取り、フィードバックを送る** | モータードライバ側マイコン |
 
-```mermaid
-sequenceDiagram
-    participant C as 上位マイコン / PC<br/>MotorDriverClient
-    participant S as モータードライバ<br/>MotorDriverServer
-
-    C->>S: set_target(float)
-    C->>S: set_gain(type, value)
-    C->>S: set_init(config)
-    S-->>C: send_feedback(float, uint8_t)
-    S-->>C: send_hardware_status(float, int8_t)
-```
+![Motor Sequence](../uml/motor_sequence.png)
 
 **どちらも同じ `dev_id` を使います。** ID が一致したフレームが自動的にルーティングされます。
 

@@ -1,0 +1,32 @@
+@startuml architecture_layers
+!theme plain
+skinparam backgroundColor #ffffff
+skinparam classBackgroundColor #e8f4f8
+skinparam classBorderColor #0066cc
+
+package "Application" {
+  object "ROS2 Node / STM32 Main Loop" as A
+}
+
+package "Devices Layer" {
+  object "MotorDriverClient\nMotorDriverServer\nSolenoidDriverClient\nSolenoidDriverServer" as B
+}
+
+package "Core Layer" {
+  object "CANBus · CANDevice · CANFrame\nid namespace" as C
+}
+
+package "Drivers Layer" {
+  object "ICanDriver · DriverSTM32CAN · DriverSTM32FDCAN" as D
+}
+
+A --> B : use
+B --> C : inherit
+C --> D : depend
+
+note as N1
+  Dependency direction is top to bottom only.
+  Drivers layer does not depend on Core (only CANFrame reference).
+end note
+
+@enduml

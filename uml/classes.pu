@@ -1,0 +1,49 @@
+@startuml classes
+!theme plain
+skinparam backgroundColor #ffffff
+skinparam classBackgroundColor #f0f0f0
+skinparam classBorderColor #333333
+
+class CANBus {
+  -devices_
+  -driver_
+  +update()
+  +send_frame(CANFrame)
+  -attach(CANDevice*)
+  -detach(CANDevice*)
+}
+
+class CANDevice {
+  {abstract}
+  #send(...)
+  +on_receive(CANFrame)*
+}
+
+interface ICanDriver {
+  +send(CANFrame)*
+  +receive(CANFrame)*
+}
+
+class MotorDriver {
+  +send_target(float)
+  +send_gain(...)
+}
+
+class SolenoidDriver {
+  +send_target(uint8_t)
+}
+
+class CANFrame {
+  +id
+  +dlc
+  +data[]
+}
+
+CANBus --> CANDevice : manages
+CANBus --> ICanDriver : uses
+CANDevice --> CANFrame : uses
+ICanDriver --> CANFrame : uses
+MotorDriver --|> CANDevice
+SolenoidDriver --|> CANDevice
+
+@enduml

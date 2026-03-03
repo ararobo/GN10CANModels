@@ -1,0 +1,15 @@
+@startuml servo_overview
+!theme plain
+skinparam backgroundColor #ffffff
+
+participant "Master (Client)" as M
+participant "Servo MCU (Server)" as S
+
+M -> S : set_init(frequency_hz)\n[MsgTypeServoDriver::Init]
+M -> S : set_duty_cycle(duty)\n[MsgTypeServoDriver::Target]
+
+S -> S : get_new_init()\nfrequency_hz を取得して\nPWM 初期化
+
+S -> S : get_new_duty_cycle()\nduty_cycle を取得して\nPWM 出力
+
+@enduml
