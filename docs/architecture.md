@@ -106,7 +106,12 @@ if (server.get_new_target(target)) {
 
 ### ビット割り当て (Standard ID: 11bit)
 
-![CAN ID Design](../uml/can_id_design.png)
+```mermaid
+packet-beta
+  0-2: "Command (3bit)"
+  3-6: "DeviceID (4bit)"
+  7-10: "DeviceType (4bit)"
+```
 
 | フィールド | ビット幅 | 範囲 | 用途 |
 | :--- | :--- | :--- | :--- |
@@ -119,7 +124,12 @@ if (server.get_new_target(target)) {
 `CANBus::dispatch()` は `get_routing_id()` (DeviceType + DeviceID の上位8bit) で
 `on_receive()` を呼ぶデバイスを絞り込みます。
 Command ビットを含めた完全なフィルタリングは各デバイスの `on_receive()` 内で行います。
-![CAN ID Design](../uml/can_id_design.png)約 | 理由 |
+
+---
+
+## 6. 設計上の制約と理由
+
+| 制約 | 理由 |
 | :--- | :--- |
 | 動的メモリ不使用 | 組み込みシステムでのヒープ断片化・非決定的遅延を回避 |
 | `CANDevice` のコピー/ムーブ禁止 | バスへのポインタ管理の一意性を保証するため |
