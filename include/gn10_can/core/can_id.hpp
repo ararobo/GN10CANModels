@@ -27,7 +27,7 @@ static constexpr uint8_t BIT_WIDTH_COMMAND  = 3;
 enum class DeviceType : uint8_t {
     EmergencyStop       = 0,
     MotorDriver         = 1,
-    ServoMoter          = 2,
+    ServoMotor          = 2,
     SolenoidDriver      = 3,
     CommunicationModule = 4,
     SensorHub           = 5,
