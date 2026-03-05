@@ -1,4 +1,7 @@
 #pragma once
+
+#include <optional>
+
 #include "gn10_can/core/can_bus.hpp"
 #include "gn10_can/core/can_device.hpp"
 #include "gn10_can/core/can_frame.hpp"
@@ -10,9 +13,12 @@ class ServoMotorServer : public CANDevice
 public:
     ServoMotorServer(CANBus& bus, uint8_t device_id);
 
-    bool get_init(float& init);
-    bool get_duty(uint16_t& duty);
+    bool get_new_init(uint16_t& min_us, uint16_t& max_us);
+    bool get_new_angle_rad(float& angle_rad);
     void on_receive(const CANFrame& frame) override;
+
+private:
+    std::optional<float> angle_rad_;
 };
 
 }  // namespace devices
