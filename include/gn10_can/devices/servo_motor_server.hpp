@@ -18,7 +18,15 @@ public:
     void on_receive(const CANFrame& frame) override;
 
 private:
-    std::optional<float> angle_rad_;
+    /// Init受信データをまとめる構造体
+    struct InitConfig
+    {
+        uint16_t min_us;
+        uint16_t max_us;
+    };
+
+    std::optional<InitConfig> init_;
+    std::optional<float>      angle_rad_;
 };
 
 }  // namespace devices
