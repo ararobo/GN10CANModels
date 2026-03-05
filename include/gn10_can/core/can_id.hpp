@@ -60,7 +60,7 @@ enum class MsgTypeMotorDriver : uint8_t {
  * @brief サーボドライバーのメッセージ種類（コマンド）
  *
  */
-enum class MsgTypeServoMoter : uint8_t {
+enum class MsgTypeServoMotor : uint8_t {
     Init      = 0,
     AngleRad  = 1,
     Frequency = 2,
