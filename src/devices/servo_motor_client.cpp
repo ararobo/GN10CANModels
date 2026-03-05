@@ -1,4 +1,5 @@
 #include "gn10_can/devices/servo_motor_client.hpp"
+
 #include "gn10_can/utils/can_converter.hpp"
 
 namespace gn10_can {
@@ -9,7 +10,7 @@ ServoMotorClient::ServoMotorClient(CANBus& bus, uint8_t device_id)
 {
 }
 
-void ServoMotorClient::set_init(uint16_t min_us, u_int16_t max_us)
+void ServoMotorClient::set_init(uint16_t min_us, uint16_t max_us)
 {
     std::array<uint8_t, 4> payload{};
     converter::pack(payload, 0, min_us);
