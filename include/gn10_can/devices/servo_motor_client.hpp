@@ -21,10 +21,10 @@ class ServoMotorClient : public CANDevice
 public:
     ServoMotorClient(CANBus& bus, uint8_t device_id);
     /**
-     * @brief サーボモータのduty最大値と最小値の設定
+     * @brief サーボモータのパルス幅最大値と最小値の設定
      *
-     * @param min_us　duty最大値
-     * @param max_us　duty最小値
+     * @param min_us　パルス幅最大値
+     * @param max_us　パルス幅最小値
      */
     void set_init(uint16_t min_us, uint16_t max_us);
     /**

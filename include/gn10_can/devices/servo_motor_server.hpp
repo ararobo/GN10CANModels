@@ -13,10 +13,10 @@ class ServoMotorServer : public CANDevice
 public:
     ServoMotorServer(CANBus& bus, uint8_t device_id);
     /**
-     * @brief 受け取ったdutyの最大値と最小値の設定
+     * @brief 受け取ったパルス幅の最大値と最小値の設定
      *
-     * @param min_us　最大のduty値
-     * @param max_us　最小のduty値
+     * @param min_us　最大のパルス幅値
+     * @param max_us　最小のパルス幅値
      * @return true
      * @return false
      */
@@ -32,7 +32,12 @@ public:
     void on_receive(const CANFrame& frame) override;
 
 private:
-    std::optional<float> angle_rad_;
+    struct pulse_set {
+        uint16_t min_us;
+        uint16_t max_us;
+    };
+    std::optional<pulse_set> GetPulse_;
+    std::optional<float> GetAngle_;
 };
 
 }  // namespace devices
