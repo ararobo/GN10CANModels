@@ -32,12 +32,12 @@ public:
     void on_receive(const CANFrame& frame) override;
 
 private:
-    struct pulse_set {
+    struct PulseSet {
         uint16_t min_us;
         uint16_t max_us;
     };
-    std::optional<pulse_set> GetPulse_;
-    std::optional<float> GetAngle_;
+    std::optional<PulseSet> pulse_set_;
+    std::optional<float> angle_rad_;
 };
 
 }  // namespace devices
