@@ -17,6 +17,8 @@ set(SOURCES
     src/devices/motor_driver_server.cpp
     src/devices/solenoid_driver_client.cpp
     src/devices/solenoid_driver_server.cpp
+    src/devices/servo_driver_client.cpp
+    src/devices/servo_driver_server.cpp
 )
 
 # Option to enable STM32 drivers (Requires HAL headers)
