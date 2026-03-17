@@ -22,7 +22,7 @@ bool ServoMotorServer::get_new_init(uint16_t& min_us, uint16_t& max_us)
 bool ServoMotorServer::get_new_angle_rad(float& angle_rad)
 {
     if (angle_rad_.has_value()) {
-        angle_rad_ = angle_rad_.value();
+        angle_rad = angle_rad_.value();
         angle_rad_.reset();
         return true;
     }
@@ -37,7 +37,7 @@ void ServoMotorServer::on_receive(const CANFrame& frame)
         uint16_t max_us = 0;
         if (converter::unpack(frame.data.data(), frame.dlc, 0, min_us) &&
             converter::unpack(frame.data.data(), frame.dlc, 2, max_us)) {
-            pulse_set_ = pulse_set{min_us, max_us};
+            pulse_set_ = PulseSet{min_us, max_us};
         }
     } else if (id_fields.is_command(id::MsgTypeServoMotor::AngleRad)) {
         float target_angle = 0.0f;
