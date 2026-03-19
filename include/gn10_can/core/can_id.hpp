@@ -27,7 +27,7 @@ static constexpr uint8_t BIT_WIDTH_COMMAND  = 3;
 enum class DeviceType : uint8_t {
     EmergencyStop       = 0,
     MotorDriver         = 1,
-    ServoDriver         = 2,
+    ServoMotor          = 2,
     SolenoidDriver      = 3,
     CommunicationModule = 4,
     SensorHub           = 5,
@@ -60,9 +60,9 @@ enum class MsgTypeMotorDriver : uint8_t {
  * @brief サーボドライバーのメッセージ種類（コマンド）
  *
  */
-enum class MsgTypeServoDriver : uint8_t {
+enum class MsgTypeServoMotor : uint8_t {
     Init      = 0,
-    Target    = 1,
+    AngleRad  = 1,
     Frequency = 2,
 };
 

@@ -15,6 +15,8 @@ set(SOURCES
     src/devices/motor_driver_types.cpp
     src/devices/motor_driver_client.cpp
     src/devices/motor_driver_server.cpp
+    src/devices/servo_motor_client.cpp
+    src/devices/servo_motor_server.cpp
     src/devices/solenoid_driver_client.cpp
     src/devices/solenoid_driver_server.cpp
 )
