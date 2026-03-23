@@ -33,6 +33,7 @@ public:
      * @param angle_rad サーボモータの角度
      */
     void set_angle_rad(float angle_rad);
+    void on_receive(const CANFrame& frame) override;
 };
 }  // namespace devices
 }  // namespace gn10_can
