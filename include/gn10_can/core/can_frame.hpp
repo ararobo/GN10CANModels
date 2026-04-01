@@ -154,7 +154,6 @@ struct CANFrame {
 };
 }  // namespace detail
 
-using FDCANFrame = detail::CANFrame<64>;
-using CANFrame   = detail::CANFrame<8>;
+using CANFrame = detail::CANFrame<8>;
 
 }  // namespace gn10_can
