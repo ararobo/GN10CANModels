@@ -14,8 +14,7 @@
 #include <array>
 #include <cstddef>
 
-#include "gn10_can/core/fdcan_frame.hpp"
-#include "gn10_can/drivers/driver_interface.hpp"
+#include "gn10_can/drivers/fdcan_driver_interface.hpp"
 
 namespace gn10_can {
 
@@ -36,7 +35,7 @@ public:
      *
      * @param driver FDCANドライバーインターフェースの参照
      */
-    explicit FDCANBus(drivers::ICanDriver& driver);
+    explicit FDCANBus(drivers::IFDCANDriver& driver);
 
     /**
      * @brief FDCANパケットの受信とデバイスへのルーティング処理
@@ -84,7 +83,7 @@ private:
      */
     void dispatch(const FDCANFrame& frame);
 
-    drivers::ICanDriver& driver_;                      // CANドライバーインターフェースの参照を保持
+    drivers::IFDCANDriver& driver_;                    // CANドライバーインターフェースの参照を保持
     std::array<FDCANDevice*, MAX_DEVICES> devices_{};  // 登録されているデバイスの配列
     std::size_t device_count_ = 0;                     // 登録されているデバイス数
 };

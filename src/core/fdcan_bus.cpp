@@ -7,7 +7,7 @@
 
 namespace gn10_can {
 
-FDCANBus::FDCANBus(drivers::ICanDriver& driver) : driver_(driver), devices_{}, device_count_(0) {}
+FDCANBus::FDCANBus(drivers::IFDCANDriver& driver) : driver_(driver), devices_{}, device_count_(0) {}
 
 void FDCANBus::update()
 {
