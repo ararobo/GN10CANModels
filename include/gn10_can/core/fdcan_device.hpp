@@ -3,7 +3,7 @@
  * @author Gento Aiba (aiba-gento)
  * @brief FDCAN対応デバイスの抽象化クラスのヘッダーファイル
  * @version 0.1.0
- * @date 2026-01-10
+ * @date 2026-04-01
  *
  * @copyright Copyright (c) 2026 Gento Aiba
  * SPDX-License-Identifier: Apache-2.0
@@ -82,7 +82,7 @@ protected:
      * @param command
      * コマンド（データの種類を示す、CAN通信時のデータは指令として見れるためコマンドとして見なす）
      * @param data 送信データ
-     * @param len 送信データ長（MAX:8）
+     * @param len 送信データ長（MAX:64）
      * @return true 送信成功（CANDriverの継承後クラスによって定義）
      * @return false 送信失敗（CANDriverの継承後クラスによって定義）
      */
@@ -97,10 +97,10 @@ protected:
      * @brief コマンド・データ(array)からCANフレームを作成しCANManagerを使用して送信
      *
      * @tparam CmdEnum コマンドのEnum Class
-     * @tparam N 送信データ長：1~8
+     * @tparam N 送信データ長：1~64
      * @param command
      * コマンド（データの種類を示す、CAN通信時のデータは指令として見れるためコマンドとして見なす）
-     * @param data 送信データ（要素数1~8のarray配列）
+     * @param data 送信データ（要素数1~64のarray配列）
      * @return true 送信成功（CANDriverの継承後クラスによって定義）
      * @return false 送信失敗（CANDriverの継承後クラスによって定義）
      */
