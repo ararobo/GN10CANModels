@@ -58,7 +58,7 @@ public:
      *
      * @param frame 受信したCANパケット
      */
-    virtual void on_receive(const CANFrame& frame) = 0;
+    virtual void on_receive(const FDCANFrame& frame) = 0;
 
     /**
      * @brief ルーティングIDを取得
@@ -69,7 +69,7 @@ public:
      */
     uint32_t get_routing_id() const
     {
-        // CANFrame::get_routing_id() と同じ形式 (Type << BIT_WIDTH_DEV_ID) | DeviceID を返す
+        // FDCANFrame::get_routing_id() と同じ形式 (Type << BIT_WIDTH_DEV_ID) | DeviceID を返す
         return (static_cast<uint32_t>(device_type_) << id::BIT_WIDTH_DEV_ID) |
                static_cast<uint32_t>(device_id_);
     }
@@ -89,7 +89,7 @@ protected:
     template <typename CmdEnum>
     bool send(CmdEnum command, const uint8_t* data = nullptr, std::size_t len = 0)
     {
-        auto frame = CANFrame::make(device_type_, device_id_, command, data, len);
+        auto frame = FDCANFrame::make(device_type_, device_id_, command, data, len);
         return bus_.send_frame(frame);
     }
 
