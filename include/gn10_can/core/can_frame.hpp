@@ -23,19 +23,16 @@ namespace gn10_can {
  * @brief CANフレーム構造体
  *
  */
-struct CANFrame {
-    static constexpr std::size_t MAX_DLC = 8;
+template <std::size_t MaxDLC>
+struct BasicCANFrame {
+    static constexpr std::size_t MAX_DLC = MaxDLC;
 
-    uint32_t id = 0;                      // CAN ID
-    std::array<uint8_t, MAX_DLC> data{};  // Data payload
-    uint8_t dlc = 0;                      // Data length code (DLC)
-
-    // additional attribute
+    uint32_t id = 0;                     // CAN ID
+    std::array<uint8_t, MaxDLC> data{};  // データ配列
+    uint8_t dlc      = 0;                // データ長 (DLC)
     bool is_extended = false;
-    bool is_rtr      = false;
-    bool is_error    = false;
 
-    CANFrame() = default;
+    BasicCANFrame() = default;
 
     /**
      * @brief CANフレーム作成ヘルパー関数
@@ -46,10 +43,10 @@ struct CANFrame {
      * @param cmd コマンド
      * @param payload 送信データ
      * @param length 送信データの長さ
-     * @return CANFrame 生成したCANフレーム
+     * @return BasicCANFrame 生成したCANフレーム
      */
     template <typename CmdEnum>
-    static CANFrame make(
+    static BasicCANFrame make(
         id::DeviceType type,
         uint8_t dev_id,
         CmdEnum cmd,
@@ -57,7 +54,7 @@ struct CANFrame {
         std::size_t length     = 0
     )
     {
-        CANFrame frame;
+        BasicCANFrame frame;
         frame.id = id::pack(type, dev_id, cmd);
         frame.set_data(payload, length);
         return frame;
@@ -71,10 +68,10 @@ struct CANFrame {
      * @param dev_id デバイスのID
      * @param cmd コマンド
      * @param payload 送信データ（{データ配列}の様に関数呼び出し時に作成可能）
-     * @return CANFrame 生成したCANフレーム
+     * @return BasicCANFrame 生成したCANフレーム
      */
     template <typename CmdEnum>
-    static CANFrame make(
+    static BasicCANFrame make(
         id::DeviceType type, uint8_t dev_id, CmdEnum cmd, std::initializer_list<uint8_t> payload
     )
     {
@@ -129,10 +126,9 @@ struct CANFrame {
      * @return true 等しい
      * @return false 等しくない
      */
-    bool operator==(const CANFrame& other) const noexcept
+    bool operator==(const BasicCANFrame& other) const noexcept
     {
-        if (id != other.id || dlc != other.dlc || is_extended != other.is_extended ||
-            is_rtr != other.is_rtr || is_error != other.is_error) {
+        if (id != other.id || dlc != other.dlc || is_extended != other.is_extended) {
             return false;
         }
 
@@ -149,10 +145,13 @@ struct CANFrame {
      * @return true 等しくない
      * @return false 等しい
      */
-    bool operator!=(const CANFrame& other) const noexcept
+    bool operator!=(const BasicCANFrame& other) const noexcept
     {
         return !(*this == other);
     }
 };
+
+using CANFrame   = BasicCANFrame<8>;
+using FDCANFrame = BasicCANFrame<64>;
 
 }  // namespace gn10_can
