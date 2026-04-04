@@ -34,7 +34,7 @@ endif()
 find_package(ament_cmake QUIET)
 find_package(ament_cmake_auto QUIET)
 
-option(BUILD_FOR_ROS2 "Build with ament_cmake for ROS 2" ${ament_cmake_FOUND})
+option(BUILD_FOR_ROS2 "Build with ament_cmake for ROS 2" OFF)
 
 if(BUILD_FOR_ROS2)
     if(NOT ament_cmake_FOUND)
