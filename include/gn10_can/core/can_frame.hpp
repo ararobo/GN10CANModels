@@ -19,21 +19,20 @@
 
 namespace gn10_can {
 
+namespace detail {
+
 /**
  * @brief CANフレーム構造体
  *
  */
+template <std::size_t MaxDLC>
 struct CANFrame {
-    static constexpr std::size_t MAX_DLC = 8;
+    static constexpr std::size_t MAX_DLC = MaxDLC;
 
-    uint32_t id = 0;                      // CAN ID
-    std::array<uint8_t, MAX_DLC> data{};  // Data payload
-    uint8_t dlc = 0;                      // Data length code (DLC)
-
-    // additional attribute
+    uint32_t id = 0;                     // CAN ID
+    std::array<uint8_t, MaxDLC> data{};  // データ配列
+    uint8_t dlc      = 0;                // データ長 (DLC)
     bool is_extended = false;
-    bool is_rtr      = false;
-    bool is_error    = false;
 
     CANFrame() = default;
 
@@ -131,8 +130,7 @@ struct CANFrame {
      */
     bool operator==(const CANFrame& other) const noexcept
     {
-        if (id != other.id || dlc != other.dlc || is_extended != other.is_extended ||
-            is_rtr != other.is_rtr || is_error != other.is_error) {
+        if (id != other.id || dlc != other.dlc || is_extended != other.is_extended) {
             return false;
         }
 
@@ -154,5 +152,8 @@ struct CANFrame {
         return !(*this == other);
     }
 };
+}  // namespace detail
+
+using CANFrame = detail::CANFrame<8>;
 
 }  // namespace gn10_can

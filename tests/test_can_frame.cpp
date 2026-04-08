@@ -11,8 +11,6 @@ TEST(CANFrameTest, DefaultConstructor)
     EXPECT_EQ(frame.id, 0);
     EXPECT_EQ(frame.dlc, 0);
     EXPECT_FALSE(frame.is_extended);
-    EXPECT_FALSE(frame.is_rtr);
-    EXPECT_FALSE(frame.is_error);
 }
 
 TEST(CANFrameTest, MakeWithPointer)

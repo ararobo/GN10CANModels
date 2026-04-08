@@ -12,6 +12,7 @@ endif()
 
 set(SOURCES
     src/core/can_bus.cpp
+    src/core/fdcan_bus.cpp
     src/devices/motor_driver_types.cpp
     src/devices/motor_driver_client.cpp
     src/devices/motor_driver_server.cpp
