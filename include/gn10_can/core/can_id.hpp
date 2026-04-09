@@ -32,6 +32,7 @@ enum class DeviceType : uint8_t {
     CommunicationModule = 4,
     SensorHub           = 5,
     LED                 = 6,
+    ESCHub              = 7
 };
 
 /**
@@ -64,6 +65,16 @@ enum class MsgTypeServoMotor : uint8_t {
     Init      = 0,
     AngleRad  = 1,
     Frequency = 2,
+};
+
+/**
+ * @brief ESCHubのメッセージの種類(コマンド)
+ *
+ */
+enum class MsgTypeESCHub : uint8_t {
+    Gain                       = 0,
+    AngularVelocities          = 1,
+    AngularVelocitiesFeedbacks = 2,
 };
 
 /**

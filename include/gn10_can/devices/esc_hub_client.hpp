@@ -60,11 +60,11 @@ public:
 
 private:
     // 角速度格納用構造体
-    struct angular_velocity_feedbacks {
+    struct AngularVelocityFeedbacks {
         float angular_velocity_feedback[4];
     };
 
-    std::optional<angular_velocity_feedbacks> angular_velocity_feedback_;
+    std::optional<AngularVelocityFeedbacks> angular_velocity_feedback_;
 };
 
 }  // namespace devices

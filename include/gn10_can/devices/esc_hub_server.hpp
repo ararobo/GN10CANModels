@@ -20,7 +20,7 @@ public:
     ESCHubServer(FDCANBus& bus, uint8_t device_id);
 
     /**
-     * @brief ゲインを読み取る関数。
+     * @brief ゲインを読み取る関数。init
      *
      * @param motor_num ゲインを読み取りたいモーター(0~3)
      * @param all_gain ゲインを格納している配列 kp ki kd ffの順で格納されています
@@ -43,12 +43,12 @@ public:
 
 private:
     // 角速度格納用構造体
-    struct angular_velocities {
+    struct AngularVelocities {
         float angular_velocity[4];
     };
 
-    std::optional<angular_velocities> angular_velocity_;
-    std::optional<ESCHubConfig> motor_gain_[4];
+    std::optional<AngularVelocities> angular_velocity_;
+    std::optional<ESCHubConfig> motor_gain_;
 };
 
 }  // namespace devices

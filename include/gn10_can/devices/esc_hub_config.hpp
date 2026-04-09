@@ -3,10 +3,10 @@
 namespace gn10_can {
 namespace devices {
 struct ESCHubConfig {
-    float kp;
-    float ki;
-    float kd;
-    float ff;
+    float kp = 0.0f;
+    float ki = 0.0f;
+    float kd = 0.0f;
+    float ff = 0.0f;
 
     void set_gain_kp(float kp);
 
