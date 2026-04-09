@@ -62,8 +62,6 @@ bool DriverSTM32FDCAN::receive(CANFrame& out_frame)
     out_frame.id          = rx_header.Identifier;
     out_frame.dlc         = rx_header.DataLength;
     out_frame.is_extended = (rx_header.IdType == FDCAN_EXTENDED_ID);
-    out_frame.is_rtr      = (rx_header.RxFrameType == FDCAN_REMOTE_FRAME);
-    out_frame.is_error    = false;
 
     for (uint8_t i = 0; i < out_frame.dlc; ++i) {
         out_frame.data[i] = rx_data[i];

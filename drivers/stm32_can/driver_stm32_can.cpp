@@ -76,8 +76,6 @@ bool DriverSTM32CAN::receive(CANFrame& out_frame)
     }
     out_frame.dlc         = rx_header.DLC;
     out_frame.is_extended = (rx_header.IDE == CAN_ID_EXT);
-    out_frame.is_rtr      = (rx_header.RTR == CAN_RTR_REMOTE);
-    out_frame.is_error    = false;
 
     for (uint8_t i = 0; i < out_frame.dlc; ++i) {
         out_frame.data[i] = rx_data[i];
