@@ -203,3 +203,4 @@ This project is licensed under the Apache-2.0 - see the [LICENSE](LICENSE) file 
 - Koichiro Watanabe
 - Ayu Kanai
 - Akeru Kamagata
+- Hyakumoto Keisuke
