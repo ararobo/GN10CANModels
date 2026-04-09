@@ -35,7 +35,7 @@ public:
      * @param motor_num ゲインを設定したいモーター (0〜3)
      * @param all_gain ゲインを格納する配列 kp ki kd ffの順で格納します
      */
-    void send_gain_all(uint8_t motor_num, ESCHubConfig esc_hub_config);
+    void set_gain_all(const ESCHubConfig& esc_hub_config);
 
     /**
      * @brief　角速度を設定する変数
