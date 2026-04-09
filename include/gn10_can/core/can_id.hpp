@@ -32,7 +32,7 @@ enum class DeviceType : uint8_t {
     CommunicationModule = 4,
     SensorHub           = 5,
     LED                 = 6,
-    ESC_HUB             = 7
+    ESCHUB              = 7
 };
 
 /**
@@ -72,9 +72,9 @@ enum class MsgTypeServoMotor : uint8_t {
  *
  */
 enum class MsgTypeESCHub : uint8_t {
-    Gain                         = 0,
-    Angular_Velocities           = 1,
-    Angular_Velocities_feedbacks = 2,
+    Gain                       = 0,
+    AngularVelocities          = 1,
+    AngularVelocitiesFeedbacks = 2,
 };
 
 /**

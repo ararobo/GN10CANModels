@@ -4,7 +4,7 @@
 namespace gn10_can {
 namespace devices {
 ESCHubServer::ESCHubServer(FDCANBus& bus, uint8_t device_id)
-    : FDCANDevice(bus, id::DeviceType::ESC_HUB, device_id)
+    : FDCANDevice(bus, id::DeviceType::ESCHUB, device_id)
 {
 }
 
@@ -39,7 +39,7 @@ void ESCHubServer::on_receive(const FDCANFrame& frame)
         if (converter::unpack(frame.data.data(), frame.dlc, 0, config)) {
             motor_gain_ = config;
         }
-    } else if (id_fields.is_command(id::MsgTypeESCHub::Angular_Velocities)) {
+    } else if (id_fields.is_command(id::MsgTypeESCHub::AngularVelocities)) {
         AngularVelocities config;
         if (converter::unpack(frame.data, 0, config)) {
             angular_velocity_ = config;
