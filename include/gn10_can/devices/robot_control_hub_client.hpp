@@ -1,3 +1,13 @@
+/**
+ * @file robot_control_hub_client.hpp
+ * @author Gento Aiba (aiba-gento)
+ * @brief ロボットを統括し、PCとの橋渡しを担うデバイスのクライアント(PC側)クラス
+ * @version 0.1
+ * @date 2026-04-12
+ *
+ * @copyright Copyright (c) 2026
+ *
+ */
 #pragma once
 #include <optional>
 
