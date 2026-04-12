@@ -1,4 +1,6 @@
 #pragma once
+#include <optional>
+
 #include "gn10_can/core/fdcan_device.hpp"
 
 namespace gn10_can {
@@ -21,7 +23,18 @@ public:
         static_assert(sizeof(Feedback) <= 64, "Feedback size exceeds FDCAN limit (64bytes)");
     }
 
+    bool get_command(Command& command)
+    {
+        if (command_.has_value()) {
+            command = command_.value();
+            command_.reset();
+            return true;
+        }
+        return false;
+    }
+
 private:
+    std::optional<Command> command_;
 };
 
 }  // namespace devices
