@@ -1,4 +1,4 @@
-#include "esc_hub_client.hpp"
+#include "gn10_can/devices/esc_hub_client.hpp"
 
 #include "gn10_can/utils/can_converter.hpp"
 namespace gn10_can {
@@ -11,7 +11,7 @@ ESCHubClient::ESCHubClient(FDCANBus& bus, uint8_t device_id)
 void ESCHubClient::set_gain_all(const ESCHubConfig& esc_hub_config)
 {
     FDCANFrame frame =
-        FDCANFrame::make(id::DeviceType::ESCHUB, device_id_, id::MsgTypeESCHub::Gain);
+        FDCANFrame::make(id::DeviceType::ESCHub, device_id_, id::MsgTypeESCHub::Gain);
     converter::pack(frame.data, 0, esc_hub_config);
     frame.dlc = sizeof(ESCHubConfig);
     bus_.send_frame(frame);
@@ -20,7 +20,7 @@ void ESCHubClient::set_gain_all(const ESCHubConfig& esc_hub_config)
 void ESCHubClient::set_angular_velocities(float angular_velocities[4])
 {
     FDCANFrame frame =
-        FDCANFrame::make(id::DeviceType::ESCHUB, device_id_, id::MsgTypeESCHub::AngularVelocities);
+        FDCANFrame::make(id::DeviceType::ESCHub, device_id_, id::MsgTypeESCHub::AngularVelocities);
     for (int i = 0; i < 4; i++) {
         converter::pack(frame.data, i * sizeof(float), angular_velocities[i]);
     }

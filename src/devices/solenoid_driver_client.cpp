@@ -32,7 +32,7 @@ void SolenoidDriverClient::set_target(const std::array<bool, 8>& target)
     set_target(data);
 }
 
-void SolenoidDriverClient::on_receive(const CANFrame& frame) {}
+void SolenoidDriverClient::on_receive(const CANFrame&) {}
 
 }  // namespace devices
 }  // namespace gn10_can
