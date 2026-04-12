@@ -16,7 +16,7 @@
 namespace gn10_can {
 namespace drivers {
 
-class DriverSTM32FDCAN : public ICanDriver
+class DriverSTM32FDCAN : public ICANDriver
 {
 public:
     DriverSTM32FDCAN(FDCAN_HandleTypeDef* hfdcan) : hfdcan_(hfdcan) {}

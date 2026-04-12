@@ -19,10 +19,10 @@ namespace drivers {
  * @brief CAN通信ハードウェアインターフェースの抽象化クラス
  *
  */
-class ICanDriver
+class ICANDriver
 {
 public:
-    virtual ~ICanDriver() = default;
+    virtual ~ICANDriver() = default;
 
     /**
      * @brief CANフレーム送信関数

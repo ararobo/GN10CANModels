@@ -7,7 +7,7 @@
 
 namespace gn10_can {
 
-CANBus::CANBus(drivers::ICanDriver& driver) : driver_(driver), devices_{}, device_count_(0) {}
+CANBus::CANBus(drivers::ICANDriver& driver) : driver_(driver), devices_{}, device_count_(0) {}
 
 void CANBus::update()
 {
