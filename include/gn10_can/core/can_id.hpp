@@ -32,7 +32,8 @@ enum class DeviceType : uint8_t {
     CommunicationModule = 4,
     SensorHub           = 5,
     LED                 = 6,
-    ESCHub              = 7
+    ESCHub              = 7,
+    RobotControlHub     = 8,
 };
 
 /**
@@ -75,6 +76,16 @@ enum class MsgTypeESCHub : uint8_t {
     Gain                       = 0,
     AngularVelocities          = 1,
     AngularVelocitiesFeedbacks = 2,
+};
+
+/**
+ * @brief ESCHubのメッセージの種類(コマンド)
+ *
+ */
+enum class MsgTypeRobotControlHub : uint8_t {
+    Init     = 0,
+    Command  = 1,
+    Feedback = 2,
 };
 
 /**
